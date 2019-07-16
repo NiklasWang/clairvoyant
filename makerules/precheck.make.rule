@@ -1,0 +1,17 @@
+ifneq ($strip $(PRECHECKED),y)
+
+PRECHECKED   = y
+
+ISLINUX  = $(if $(findstring Linux, $(shell uname)), y, )
+ISCYGWIN = $(if $(findstring CYGWIN, $(shell uname)), y, )
+PLATFORM = "Unknown"
+
+ifeq ($(strip $(ISLINUX)),y)
+  PLATFORM = "Linux"
+endif
+
+ifeq ($(strip $(ISCYGWIN)),y)
+  PLATFORM = "Cygwin"
+endif
+
+endif

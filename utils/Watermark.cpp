@@ -10,6 +10,7 @@
 #include "Logs.h"
 #include "Modules.h"
 #include "MemMgmt.h"
+#include "c.h"
 
 #define WATER_MARK_DAT_TYPE_1_PATH "resources/Z5-AI-1220x240.dat"
 

@@ -2,6 +2,7 @@
 #define _PANDORA_LOGO_H_
 
 #include <stdint.h>
+#include <stdlib.h>
 
 namespace pandora {
 

@@ -1,7 +1,7 @@
 #include "AlgorithmIntf.h"
 #include "PandoraCore.h"
 #include "AlgorithmProperties.h"
-
+/*
 #include "BeautyFace.h"
 #include "AgeGenderDetection.h"
 #include "HDRCheckerT.h"
@@ -22,8 +22,9 @@
 #include "RTBokeh.h"
 #include "StillBokehA.h"
 #include "DualCamNightShot.h"
-#include "WaterMark.h"
 #include "SingleBokeh.h"
+*/
+#include "WaterMark.h"
 
 #include "Algorithm.h"
 

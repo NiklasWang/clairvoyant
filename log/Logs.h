@@ -5,7 +5,7 @@
 
 namespace pandora {
 
-#ifdef ENABLE_LOGGER
+#ifndef DISABLE_LOGGER
 #define LOGD(module, fmt, args...) PLOGD(module, fmt, ##args)
 #define LOGI(module, fmt, args...) PLOGI(module, fmt, ##args)
 #define LOGW(module, fmt, args...) PLOGW(module, fmt, ##args)

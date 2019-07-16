@@ -1,6 +1,9 @@
 #ifndef _SEMAPHORE_TIMEOUT_H_
 #define _SEMAPHORE_TIMEOUT_H_
 
+#include <stdint.h>
+
+
 #include "Semaphore.h"
 
 namespace pandora {

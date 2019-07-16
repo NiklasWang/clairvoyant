@@ -1,7 +1,9 @@
-targets = $(shell find . -name '*.make')
+all: compile link
 
-all:
-	$(patsubst %, make -f %;, $(targets))
+compile:
+
+link:
 
 clean:
-	$(patsubst %, make clean -f %;, $(targets))
+
+.PHONY: all clean

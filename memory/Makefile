@@ -1,23 +1,32 @@
-CC = g++
-CPPFLAGS =
-LDFLAGS =
-TARGET = tester
-sources = $(wildcard *.cpp)
-objects = $(sources:.cpp=.o)
-dependence:=$(sources:.cpp=.d)
+CXX      = $(GLOBAL_CXX)
+CXXFLAGS = $(GLOBAL_CXXFLAGS)
+LDFLAGS  = $(GLOBAL_LDFLAGS) -pthread
 
-all: $(objects)
-	$(CC) $^ -o $(TARGET)
+TARGET      = libmemory$(strip $(DYLIB_EXT))
+sources     = $(wildcard *.cpp)
+objects     = $(sources:.cpp=.o)
+dependence := $(sources:.cpp=.d)
 
-include $(dependence)
+SHARED_LIBS = liblog libcore
+STATIC_LIBS = libutils
 
-%.d: %.cpp
-	@set -e; rm -f $@; \
-	$(CC) -MM $(CPPFLAGS) $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
+include $(MAKE_RULE)/find.library.make.rule 
 
-.PHONY: clean
+-include $(dependence)
 
-clean:
+include $(MAKE_RULE)/dependency.make.rule
+
+include $(MAKE_RULE)/submodule.make.rule
+
+all: compile link $(MAKE_SUB_MODULES)
+
+compile: $(objects) $(COMPILE_SUB_MODULES)
+
+link: $(objects)
+	$(CXX) $^ $(LDFLAGS) -o $(TARGET)
+	$(MAKE) $(LINK_SUB_MODULES)
+
+clean: $(CLEAN_SUB_MODULES)
 	rm -f $(TARGET) $(objects) $(dependence)
+
+.PHONY: clean $(MAKE_SUB_MODULES) $(COMPILE_SUB_MODULES) $(LINK_SUB_MODULES) $(CLEAN_SUB_MODULES)

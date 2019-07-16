@@ -208,7 +208,7 @@ int32_t PalImpl::releaseThread(ParmCategoryType category)
 
 int32_t PalImpl::processTask(TaskInf *task)
 {
-    assert(!ISNULL(dat));
+    assert(!ISNULL(task));
 
     uint32_t rc = NO_ERROR;
 

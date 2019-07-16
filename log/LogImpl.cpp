@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "LogImpl.h"
+#include "c.h"
 
 //#define SAVE_FILE_FS
 

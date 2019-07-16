@@ -88,11 +88,11 @@ private:
 
 private:
     enum AlgEvt {
-        ALG_EVT_NEW_TASK,
-        ALG_EVT_UPDATE,
-        ALG_EVT_SET_PARM,
-        ALG_EVT_QUERY_STATUS,
-        ALG_EVT_INVALID_MAX,
+        ALG_EVT_NEW_TASK = 0,
+        ALG_EVT_UPDATE = 1,
+        ALG_EVT_SET_PARM = 2,
+        ALG_EVT_QUERY_STATUS = 3,
+        ALG_EVT_INVALID_MAX = 4,
     };
 
     struct AlgNewTask {

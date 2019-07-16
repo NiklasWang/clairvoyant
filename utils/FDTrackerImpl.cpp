@@ -1,4 +1,6 @@
 #include <unistd.h>
+#include <stdarg.h>
+
 
 #include "FDTrackerImpl.h"
 #include "RefBase.h"

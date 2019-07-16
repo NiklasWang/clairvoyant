@@ -3,7 +3,7 @@
 #include "FrameCounter.h"
 #include "PalTester.h"
 #include "ThreadPoolEx.h"
-
+/*
 #include "BeautyFaceTraits.h"
 #include "AgeGenderDetectionTraits.h"
 #include "HDRCheckerTTraits.h"
@@ -22,12 +22,13 @@
 #include "RTBokehTraits.h"
 #include "StillBokehATraits.h"
 #include "DualCamNightShotTraits.h"
-#include "WaterMark.h"
 #include "JpegSWEncoder.h"
 #include "SuperResolutionTraits.h"
 #include "SingleBokeh.h"
 #include "JpegExif.h"
 #include "SiriusClient.h"
+*/
+#include "WaterMark.h"
 
 #include "Algorithm.h"
 
