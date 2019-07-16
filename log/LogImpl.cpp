@@ -1,14 +1,20 @@
+#include <stdarg.h>
+#include <stdio.h>
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
 
 #include "LogImpl.h"
-#include "c.h"
 
 //#define SAVE_FILE_FS
 
 #ifdef DBG_ASSERT_RAISE_TRAP
 #include "signal.h"
+#endif
+
+#ifndef PATH_MAX
+#define PATH_MAX 256
 #endif
 
 #ifdef PRINT_LOGCAT_LOG

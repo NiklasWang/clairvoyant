@@ -3,13 +3,15 @@ AR       = $(GLOBAL_AR)
 CXXFLAGS = $(GLOBAL_CXXFLAGS)
 ARFLAGS  = $(GLOBAL_ARFLAGS)
 
-TARGET      = libutils$(strip $(STLIB_EXT))
+TARGET      = libutil$(strip $(STLIB_EXT))
 sources     = $(wildcard *.cpp)
 objects     = $(sources:.cpp=.o)
 dependence := $(sources:.cpp=.d)
 
-SHARED_LIBS = liblog
-STATIC_LIBS = libsp
+SHARED_LIBS = liblog libthreads libmemory libcore  libutils libexternal
+STATIC_LIBS = libsp libyuv 
+
+CXXFLAGS += -I$(ROOT_DIR)/external/libyuv/include -I/usr/include/freetype2 -I/usr/include -I/usr/include/libexif -I/opt/libjpeg-turbo/include
 
 include $(MAKE_RULE)/find.library.make.rule 
 

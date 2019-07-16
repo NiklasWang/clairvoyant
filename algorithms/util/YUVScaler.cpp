@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdarg.h>
 
 #include "YUVScaler.h"
 #include "AlgorithmHelper.h"

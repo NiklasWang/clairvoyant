@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+#include <ft2build.h>
+#include <freetype.h>
+
 
 namespace pandora {
 

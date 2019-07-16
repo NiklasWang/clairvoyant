@@ -1,6 +1,0 @@
-
- 
-  
-  
- -fPIC -Wl,-Bstatic -Wl,-Bdynamic 
-

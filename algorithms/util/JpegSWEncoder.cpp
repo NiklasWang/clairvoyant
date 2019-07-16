@@ -1,3 +1,5 @@
+#include <stdarg.h>
+
 #include "JpegSWEncoder.h"
 #include "AlgorithmHelper.h"
 #include "PfLogger.h"

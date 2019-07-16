@@ -3,6 +3,7 @@
 
 #include "AlgorithmBase.h"
 #include "Atomic.h"
+#include "AlgorithmIntf.h"
 
 namespace pandora {
 
@@ -59,7 +60,7 @@ int32_t AlgorithmBase<T, Trait>::construct()
     if (SUCCEED(rc)) {
         rc = initAlgorithm();
         if (!SUCCEED(rc)) {
-            LOGE(mModule, "Failed to init algorithm %s", whoamI());
+            LOGE(mModule, "Failed to init algorithm %s", Identifier::whoamI());
         }
     }
 
@@ -104,9 +105,9 @@ int32_t AlgorithmBase<T, Trait>::construct()
 
     if (SUCCEED(rc)) {
         mConstructed = true;
-        LOGD(mModule, "Algorithm %s id %d constructed", whoamI(), id());
+        LOGD(mModule, "Algorithm %s id %d constructed", Identifier::whoamI(), id());
     } else {
-        LOGE(mModule, "Failed to construct algorithm %s id %d", whoamI(), id());
+        LOGE(mModule, "Failed to construct algorithm %s id %d", Identifier::whoamI(), id());
     }
 
     return rc;
@@ -133,7 +134,7 @@ int32_t AlgorithmBase<T, Trait>::destruct()
     if (SUCCEED(rc)) {
         rc = deinitAlgorithm();
         if (!SUCCEED(rc)) {
-            LOGE(mModule, "Failed to deinit algorithm %s id %d", whoamI(), id());
+            LOGE(mModule, "Failed to deinit algorithm %s id %d", Identifier::whoamI(), id());
         }
     }
 
@@ -153,9 +154,9 @@ int32_t AlgorithmBase<T, Trait>::destruct()
     }
 
     if (!SUCCEED(rc)) {
-        LOGE(mModule, "Failed to destructed algorithm %s id %d ", whoamI(), id());
+        LOGE(mModule, "Failed to destructed algorithm %s id %d ", Identifier::whoamI(), id());
     } else {
-        LOGD(mModule, "Algorithm %s id %d destructed", whoamI(), id());
+        LOGD(mModule, "Algorithm %s id %d destructed", Identifier::whoamI(), id());
     }
 
     return rc;
@@ -371,7 +372,7 @@ int32_t AlgorithmBase<T, Trait>::setLinker(IdType parent,
                 if (ISNULL(prev) && ISNULL(next)) {
                     mLinker.erase(iter);
                     LOGD(mModule, "Algorithm %s linked with prev NULL "
-                        "next NULL with parent id %d", whoamI(), iter->parent);
+                        "next NULL with parent id %d", Identifier::whoamI(), iter->parent);
                 }
                 found = true;
             }
@@ -391,7 +392,7 @@ int32_t AlgorithmBase<T, Trait>::setLinker(IdType parent,
 
         for (auto &item : mLinker) {
             LOGD(mModule, "Algorithm %s linked with prev %s next %s "
-                "with parent id %d", whoamI(),
+                "with parent id %d", Identifier::whoamI(),
                 ISNULL(item.prev) ? "NULL" : item.prevName.c_str(),
                 ISNULL(item.next) ? "NULL" : item.nextName.c_str(),
                 item.parent);
@@ -533,7 +534,7 @@ int32_t AlgorithmBase<T, Trait>::queueToThread(void *data)
             sync);
         if (!SUCCEED(rc)) {
             LOGE(mModule, "Failed to %s to algorithm %s thread %s",
-                evt->whoamI(), whoamI(), mThread.whoamI());
+                evt->whoamI(), Identifier::whoamI(), mThread.whoamI());
         }
     }
 
@@ -685,13 +686,13 @@ int32_t AlgorithmBase<T, Trait>::process(AlgNewTask *task)
         if (mFrameDrop &&
             (mUnFishedTaskNum > static_cast<int32_t>(mMaxQueueSize))) {
             LOGI(mModule, "FRAME DROP id %d in %s unfinished task %d/%d",
-                task->taskId, whoamI(), mUnFishedTaskNum, mMaxQueueSize);
-            LOGD(mModule, "Use last %s result instread", whoamI());
+                task->taskId, Identifier::whoamI(), mUnFishedTaskNum, mMaxQueueSize);
+            LOGD(mModule, "Use last %s result instread", Identifier::whoamI());
             rc = ALREADY_EXISTS;
         }
         if (!mConstructed) {
             LOGD(mModule, "Drop frame id %d to speed up algorithm %s "
-                "destruction", task->taskId, whoamI());
+                "destruction", task->taskId, Identifier::whoamI());
             rc = NOT_INITED;
         }
     }
@@ -700,7 +701,7 @@ int32_t AlgorithmBase<T, Trait>::process(AlgNewTask *task)
         if (ISNULL(task->result)) {
             rc = processNewTask(task->info);
             if (!SUCCEED(rc)) {
-                LOGE(mModule, "Failed to process new task in %s", whoamI());
+                LOGE(mModule, "Failed to process new task in %s", Identifier::whoamI());
             }
             tmprc = task->cb(task->info);
             if (!SUCCEED(tmprc)) {
@@ -713,7 +714,7 @@ int32_t AlgorithmBase<T, Trait>::process(AlgNewTask *task)
         if (NOTNULL(task->result)) {
             rc = processNewTask(task->info, *task->result);
             if (!SUCCEED(rc)) {
-                LOGE(mModule, "Failed to ProcessEx new task in %s", whoamI());
+                LOGE(mModule, "Failed to ProcessEx new task in %s", Identifier::whoamI());
             }
             tmprc = task->cb(*task->result);
             if (!SUCCEED(tmprc)) {
@@ -802,7 +803,7 @@ int32_t AlgorithmBase<T, Trait>::update(AlgNewUpdate *update)
     if (SUCCEED(rc)) {
         rc = processUpdate(update->info);
         if (!SUCCEED(rc)) {
-            LOGE(mModule, "Update algorithm failed on %s", whoamI());
+            LOGE(mModule, "Update algorithm failed on %s", Identifier::whoamI());
         }
     }
 
@@ -933,7 +934,7 @@ int32_t AlgorithmBase<T, Trait>::queryStatus(StatusType *_status)
 template <typename T, typename Trait>
 const char *AlgorithmBase<T, Trait>::getName() const
 {
-    return whoamI();
+    return Identifier::whoamI();
 }
 
 template <typename T, typename Trait>

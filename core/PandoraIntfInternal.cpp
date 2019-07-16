@@ -10,6 +10,7 @@ static const char * const gFrameFormatStr[] = {
     [FRAME_FORMAT_JPEG]         = "JPEG",
     [FRAME_FORMAT_JPEG_MONO]    = "JPEG_MONO",
     [FRAME_FORMAT_JPEG_TELE]    = "JPEG_TELE",
+    [FRAME_FORMAT_BAYER]        = "BAYER",
     [FRAME_FORMAT_MAX_INVALID]  = "MAX INVALID",
 };
 

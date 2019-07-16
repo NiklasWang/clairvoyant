@@ -62,6 +62,7 @@ sp<IAlgorithm> PandoraCore::getAlgorithm(AlgType type)
         uint32_t argsNum = mAlgProperties->getArgsNum(type);
 
         switch (type) {
+#if 0
 #ifdef ENABLE_BEAUTY_FACE
             case ALG_BEAUTY_FACE: {
                 result = Algorithm<BeautyFace>::create(
@@ -223,6 +224,7 @@ sp<IAlgorithm> PandoraCore::getAlgorithm(AlgType type)
                     name, threadName, frameDrop, maxQueueSize,
                     argsNum, ALG_SINGLE_BOKEH_CAP);
             } break;
+#endif
 #endif
             case ALG_MAX_INVALID:
             default: {

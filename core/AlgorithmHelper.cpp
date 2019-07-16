@@ -1,4 +1,5 @@
 #include <time.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -265,7 +266,7 @@ int32_t yuv420spToYuv420p(uint8_t *yuv420sp, uint8_t *yuv420p,
 int32_t dumpNV21ToFile(uint8_t* dat, const char *prefix,
     int32_t w, int32_t h, int32_t stride, int32_t scanline)
 {
-    assert(NOTNULL(src));
+    assert(NOTNULL(dat));
 
     int32_t rc = NO_ERROR;
     char filename[255];
@@ -321,7 +322,7 @@ int32_t dumpNV21ToFile(uint8_t* dat, const char *prefix,
 int32_t dumpJpegToFile(const void *data, const char *prefix,
     int32_t w, int32_t h, size_t size)
 {
-    assert(NOTNULL(src));
+    assert(NOTNULL(data));
 
     int32_t rc = NO_ERROR;
     char filename[255];
@@ -359,7 +360,7 @@ int32_t dumpJpegToFile(const void *data, const char *prefix,
 int32_t dumpNV21ToJpeg (void *data, const char *prefix,
     int32_t w, int32_t h, int32_t stride, int32_t scanline)
 {
-    assert(NOTNULL(src));
+    assert(NOTNULL(data));
 
     int32_t rc = NO_ERROR;
     char filename[255];

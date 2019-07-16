@@ -3,13 +3,13 @@ AR       = $(GLOBAL_AR)
 CXXFLAGS = $(GLOBAL_CXXFLAGS)
 ARFLAGS  = $(GLOBAL_ARFLAGS)
 
-TARGET      = liblog$(strip $(DYLIB_EXT))
+TARGET      = libyuv$(strip $(DYLIB_EXT))
 sources     = $(wildcard *.cpp)
 objects     = $(sources:.cpp=.o)
 dependence := $(sources:.cpp=.d)
 
 SHARED_LIBS =
-STATIC_LIBS =
+STATIC_LIBS = 
 
 include $(MAKE_RULE)/find.library.make.rule 
 

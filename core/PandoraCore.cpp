@@ -22,12 +22,12 @@
 #include "RTBokehTraits.h"
 #include "StillBokehATraits.h"
 #include "DualCamNightShotTraits.h"
-#include "JpegSWEncoder.h"
 #include "SuperResolutionTraits.h"
 #include "SingleBokeh.h"
-#include "JpegExif.h"
-#include "SiriusClient.h"
 */
+#include "SiriusClient.h"
+#include "JpegSWEncoder.h"
+#include "JpegExif.h"
 #include "WaterMark.h"
 
 #include "Algorithm.h"
@@ -366,7 +366,7 @@ int32_t PandoraCore::takePicture()
 
     mCamStatus.takingPic = true;
     mCamStatus.snapshotNeeded = 1;
-
+#if 0
     if (SUCCEED(rc)) {
         if (mAlgStatus[ALG_PICTURE_ZOOM].enable) {
             sp<IAlgorithm> alg = getAlgorithm(ALG_PICTURE_ZOOM);
@@ -597,7 +597,7 @@ int32_t PandoraCore::takePicture()
             mAlgStatus[ALG_SINGLE_BOKEH_CAP].enabled = false;
         }
     }
-
+#endif
     if (rc == JUMP_DONE) {
         RESETRESULT(rc);
     }
@@ -836,7 +836,7 @@ int32_t PandoraCore::updateMetadata(
         }
         RESETRESULT(rc);
     }
-
+#if 0
     if (SUCCEED(rc)) {
         mAlgStatus[ALG_IMAGE_STABILIZATION].enable =
             checkImageStabOn();
@@ -1091,7 +1091,7 @@ int32_t PandoraCore::updateMetadata(
         }
         RESETRESULT(rc);
     }
-
+#endif
     return RETURNIGNORE(rc, NOT_INITED);
 }
 
@@ -1116,7 +1116,7 @@ int32_t PandoraCore::updateCommand(ReqArgs<TT_COMMAND_AVAILABLE> &task)
             }
         }
     }
-
+#if 0
     if (SUCCEED(rc)) {
         switch (cmd.type) {
             case CommandInf::COMMAND_TYPE_LONGSHOT_ON: {
@@ -1163,7 +1163,7 @@ int32_t PandoraCore::updateCommand(ReqArgs<TT_COMMAND_AVAILABLE> &task)
             } break;
         }
     }
-
+#endif
     return rc;
 }
 
@@ -1229,6 +1229,7 @@ int32_t PandoraCore::updateParameter(
             LOGD(mModule, "beauty setting not set or invalid");
         } else {
             switch(beauty.mode) {
+#if 0
             case BEAUTY_MODE_ON:
             case BEAUTY_MODE_MANUAL: {
                 mAlgStatus[ALG_BEAUTY_FACE].enable = true;
@@ -1283,6 +1284,7 @@ int32_t PandoraCore::updateParameter(
                     NOTNULL(alg2) ? removeAlgorithm(ALG_MICRO_PLASTIC) : NO_ERROR;
                 }
             } break;
+#endif
             case BEAUTY_MODE_OFF: {
                 mAlgStatus[ALG_BEAUTY_FACE].enable  = false;
                 mAlgStatus[ALG_BEAUTY_FACE].enabled = false;
@@ -1301,7 +1303,7 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-
+#if 0
     if (SUCCEED(rc)) {
         PlatformPriv platformPriv;
         rc = mPal->getParm(platformPriv);
@@ -1458,7 +1460,7 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-
+#endif
     if (SUCCEED(rc)) {
         FlashMode mode;
         rc = mPal->getParm(mode);
@@ -1619,6 +1621,7 @@ int32_t PandoraCore::updateParameter(
         if (!SUCCEED(rc)) {
             LOGD(mModule, "Sub camera data not set or invalid");
         } else {
+#if 0
             if (mode.enableRTBokeh() &&
                 NOTNULL(sub.mainOTP) && sub.mainOTPSize) {
                 AlgTraits<RTBokeh>::ParmType preview_parm;
@@ -1756,10 +1759,11 @@ int32_t PandoraCore::updateParameter(
                     }
                 }
             }
+#endif
         }
         RESETRESULT(rc);
     }
-
+#if 0
     if (SUCCEED(rc)) {
         ZoomInf inf;
         rc = mPal->getParm(inf);
@@ -1816,7 +1820,7 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-
+#endif
     return rc;
 }
 
@@ -1865,7 +1869,7 @@ int32_t PandoraCore::processPreviewAlgs(TaskType &task)
                 ALG_HDR_CHECKER, _task, ASYNC_TYPE);
         }
     }
-
+#if 0
     if (mAlgStatus[ALG_AGE_GENDER_DETECTION].enabled) {
         sp<IAlgorithm> alg = getAlgorithm(ALG_AGE_GENDER_DETECTION);
         if (NOTNULL(alg) && !alg->busy()) {
@@ -1876,7 +1880,7 @@ int32_t PandoraCore::processPreviewAlgs(TaskType &task)
                 ALG_AGE_GENDER_DETECTION, _task, ASYNC_TYPE);
         }
     }
-
+#endif
     return rc;
 }
 
@@ -2551,6 +2555,7 @@ int32_t PandoraCore::onAlgResultAvailable(
             case ALG_UTILS: {
                 // Do not care...
             } break;
+#if 0
             case ALG_AGE_GENDER_DETECTION: {
                 AlgTraits<AgeGenderDetection>::ResultType *result = static_cast<
                     AlgTraits<AgeGenderDetection>::ResultType *>(_result);
@@ -2661,6 +2666,7 @@ int32_t PandoraCore::onAlgResultAvailable(
                     sendEvtCallback(EEVT_SMART_SELECT, result->index);
                 }
             } break;
+#endif
             case ALG_MAX_INVALID:
             default: {
                 LOGE(mModule, "Invalid algorithm type %d", _result->type);
@@ -2708,6 +2714,7 @@ int32_t PandoraCore::onAlgRequest(RequestType *request, AlgType submitter)
             case ALG_SMART_SELECT:
                 // Nothing to do
                 break;
+#if 0
             case ALG_AGE_GENDER_DETECTION: {
                 AlgTraits<AgeGenderDetection>::RequestType *info = static_cast<
                     AlgTraits<AgeGenderDetection>::RequestType *>(request);
@@ -2716,6 +2723,7 @@ int32_t PandoraCore::onAlgRequest(RequestType *request, AlgType submitter)
                     LOGE(mModule, "Failed to get faces info, %d", rc);
                 }
             } break;
+#endif
             case ALG_MAX_INVALID:
             default: {
                 LOGE(mModule, "Invalid algorithm type %d", submitter);

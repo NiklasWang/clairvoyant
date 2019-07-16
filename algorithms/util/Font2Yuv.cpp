@@ -5,7 +5,7 @@
 #include "MemMgmt.h"
 #include "Font2Yuv.h"
 
-#include "freetype/ftglyph.h"
+#include "ftglyph.h"
 
 #define MAX_LINE_LENGTH 150
 

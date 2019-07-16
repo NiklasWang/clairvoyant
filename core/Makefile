@@ -7,8 +7,10 @@ sources     = $(wildcard *.cpp)
 objects     = $(sources:.cpp=.o)
 dependence := $(sources:.cpp=.d)
 
-SHARED_LIBS =  libpal libutils liblog libthreads libmemory libalgorithms
-STATIC_LIBS =  libsp
+SHARED_LIBS =  libutils liblog libmemory libthreads libpal libalgorithms libexternal
+STATIC_LIBS =  libsp libfreetype libutil
+
+CXXFLAGS += -I/usr/include/freetype2
 
 include $(MAKE_RULE)/find.library.make.rule
 
