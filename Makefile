@@ -42,10 +42,10 @@ endif
 
 build: all
 
-exclude_dirs  = cygwin gui out release linux_release
+exclude_dirs  = 
 
-link_order  = log utils memory threads external 
-link_order += makerules core ipc main
+link_order  = log utils memory threads external algorithms pal
+link_order += makerules core main
 
 export
 unexport link_order
@@ -56,7 +56,6 @@ include $(MAKE_RULE)/prepare.env.make.rule
 include $(MAKE_RULE)/color.print.make.rule
 
 all: prepare $(COMPILE_SUB_MODULES)
-	$(MAKE) all $(GLOBAL_MAKEFLAGS) -C gui
 	make $(LINK_SUB_MODULES)
 	$(MAKE) release
 	@echo -e $(SUCCEED_COLOR)"Project $(PROJNAME) $(VERSION) build on $(PLATFORM) succeed."$(RESTORE_COLOR)

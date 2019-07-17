@@ -176,8 +176,6 @@ private:
     bool              mAsyncSnapshot;
     bool              mTestAlgIntf;
     bool              mTestPal;
-    bool              mEnableSirius;
-    SiriusClient     *mSirius;
 };
 
 };

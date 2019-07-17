@@ -7,7 +7,7 @@ sources     = $(wildcard *.cpp)
 objects     = $(sources:.cpp=.o)
 dependence := $(sources:.cpp=.d)
 
-SHARED_LIBS = liblog ibmemory libutils libcore
+SHARED_LIBS = liblog libmemory libutils libcore libpal
 STATIC_LIBS = libsp
 
 include $(MAKE_RULE)/find.library.make.rule 

@@ -24,8 +24,9 @@
 #include "DualCamNightShotTraits.h"
 #include "SuperResolutionTraits.h"
 #include "SingleBokeh.h"
-*/
 #include "SiriusClient.h"
+*/
+
 #include "JpegSWEncoder.h"
 #include "JpegExif.h"
 #include "WaterMark.h"
@@ -50,9 +51,7 @@ PandoraCore::PandoraCore(
     mExifReader(NULL),
     mAsyncSnapshot(false),
     mTestAlgIntf(false),
-    mTestPal(false),
-    mEnableSirius(false),
-    mSirius(NULL)
+    mTestPal(false)
 {
 }
 
@@ -154,14 +153,6 @@ int32_t PandoraCore::construct()
         }
     }
 
-    if (SUCCEED(rc)) {
-        if (mEnableSirius) {
-            mSirius = new SiriusClient();
-            if (ISNULL(mSirius)) {
-                LOGE(mModule, "Failed to create sirius client, ignore.");
-            }
-        }
-    }
 
     if (SUCCEED(rc)) {
         RWLock::AutoRLock l(mMultiExposureLock);
@@ -222,11 +213,6 @@ int32_t PandoraCore::destruct()
         mThreads->removeInstance();
     }
 
-    if (SUCCEED(rc)) {
-        if (NOTNULL(mSirius)) {
-            SECURE_DELETE(mSirius);
-        }
-    }
 
     if (!SUCCEED(rc)) {
         mConstructed = true;
@@ -1212,15 +1198,6 @@ int32_t PandoraCore::updateParameter(
         RESETRESULT(rc);
     }
 
-    if (SUCCEED(rc)) {
-        if (NOTNULL(mSirius)) {
-            rc = mSirius->update(mCamStatus.previewSize, mCamStatus.pictureSize);
-            if (!SUCCEED(rc)) {
-                LOGE(mModule, "Failed to update Sirius.");
-            }
-        }
-        RESETRESULT(rc);
-    }
 
     if (SUCCEED(rc)) {
         BeautySetting beauty;
@@ -2178,16 +2155,6 @@ int32_t PandoraCore::drawWaterMarkEncodeJpeg(TaskType &task)
         }
     }
 
-    if (SUCCEED(rc)) {
-        if (NOTNULL(mSirius)) {
-            rc = mSirius->sendData(dat.type, dat.data, dat.size);
-            if (!SUCCEED(rc)) {
-                LOGE(mModule, "Failed to send data, type %d size %d, %d",
-                    dat.type, dat.size, rc);
-                RESETRESULT(rc);
-            }
-        }
-    }
 
     return rc;
 }
@@ -2437,23 +2404,6 @@ int32_t PandoraCore::onframeReady(ReqArgs<TT_FRAME_READY> &t)
             task.scanline, task.size, task.format, task.type, task.ts);
     }
 
-    if (NOTNULL(mSirius)) {
-        SiriusTask sirius = {
-            .w = task.w,
-            .h = task.h,
-            .stride   = task.stride,
-            .scanline = task.scanline,
-            .data = task.data,
-            .type = task.type,
-            .format   = task.format,
-            .ts   = task.ts,
-        };
-        rc = mSirius->onFrameReady(sirius);
-        if (!SUCCEED(rc)) {
-            LOGE(mModule, "Failed to process on Sirius.");
-            RESETRESULT(rc);
-        }
-    }
 
     return rc;
 }
@@ -2507,15 +2457,6 @@ int32_t PandoraCore::sendEvtCallback(ExtendedCBEvt cbevt, int32_t arg)
         }
     }
 
-    if (SUCCEED(rc)) {
-        if (NOTNULL(mSirius)) {
-            rc = mSirius->sendEvent(mExtEvtId, cbevt, arg);
-            if (!SUCCEED(rc)) {
-                LOGE(mModule, "Failed to process on Sirius.");
-                RESETRESULT(rc);
-            }
-        }
-    }
 
     return RETURNIGNORE(rc, NOT_NEEDED);
 }
