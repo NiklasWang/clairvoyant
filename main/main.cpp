@@ -1,0 +1,32 @@
+#include <stdint.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <unistd.h>
+
+#include "Pandora.h"
+
+using namespace pandora;
+
+#define SIZE (20*1024*1024)
+
+int main(int argc, char *argv[])
+{
+    int fd = open("./1.yuv", O_RDWR);
+    if (fd < 0) {
+        printf("fail open\n");
+    }
+    void *buf = malloc(SIZE);
+    size_t size = read(fd, buf, SIZE);
+    FrameInfo frame;
+    frame.frame = buf;
+    frame.w = 3840;
+    frame.h = 2160;
+    frame.type = FRAME_TYPE_SNAPSHOT;
+//    Pandora::onFrameReady(frame);
+    printf("success\n");
+
+
+    return 0;
+}

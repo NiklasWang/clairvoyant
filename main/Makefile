@@ -1,17 +1,21 @@
 CXX      = $(GLOBAL_CXX)
 AR       = $(GLOBAL_AR)
 CXXFLAGS = $(GLOBAL_CXXFLAGS)
-ARFLAGS  = $(GLOBAL_ARFLAGS)
+LDFLAGS  = $(GLOBAL_LDFLAGS) -pthread
 
-TARGET      = liblog$(strip $(DYLIB_EXT))
+include $(MAKE_RULE)/project.info.make.rule
+
+TARGET      = $(PROJNAME)$(strip $(EXE_EXT))
 sources     = $(wildcard *.cpp)
 objects     = $(sources:.cpp=.o)
 dependence := $(sources:.cpp=.d)
 
-SHARED_LIBS =
-STATIC_LIBS = libutils
+include $(MAKE_RULE)/find.all.modules.make.rule
 
-include $(MAKE_RULE)/find.library.make.rule
+SHARED_LIBS =  
+STATIC_LIBS = 
+
+include $(MAKE_RULE)/find.library.make.rule 
 
 -include $(dependence)
 

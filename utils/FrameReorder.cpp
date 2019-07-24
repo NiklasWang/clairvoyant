@@ -1,3 +1,4 @@
+#include "PandoraIntfInternal.h"
 #include "Common.h"
 #include "MemMgmt.h"
 #include "FrameReorder.h"

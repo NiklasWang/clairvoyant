@@ -42,9 +42,9 @@ endif
 
 build: all
 
-exclude_dirs  = 
+exclude_dirs  =
 
-link_order  = log utils memory threads external algorithms pal
+link_order  = utils log threads resources pal external memory algorithms
 link_order += makerules core main
 
 export
@@ -56,6 +56,7 @@ include $(MAKE_RULE)/prepare.env.make.rule
 include $(MAKE_RULE)/color.print.make.rule
 
 all: prepare $(COMPILE_SUB_MODULES)
+	$(MAKE) all $(GLOBAL_MAKEFLAGS) -C main
 	make $(LINK_SUB_MODULES)
 	$(MAKE) release
 	@echo -e $(SUCCEED_COLOR)"Project $(PROJNAME) $(VERSION) build on $(PLATFORM) succeed."$(RESTORE_COLOR)

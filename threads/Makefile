@@ -2,12 +2,12 @@ CXX      = $(GLOBAL_CXX)
 AR       = $(GLOBAL_AR)
 CXXFLAGS = $(GLOBAL_CXXFLAGS)
 
-TARGET      = libthreads$(strip $(DYLIB_EXT))
+TARGET      = libthreads$(strip $(STLIB_EXT))
 sources     = $(wildcard *.cpp)
 objects     = $(sources:.cpp=.o)
 dependence := $(sources:.cpp=.d)
 
-SHARED_LIBS = liblog libmemory libutils libcore libpal
+SHARED_LIBS = liblog libmemory libutils libpal libcore
 STATIC_LIBS = libsp
 
 include $(MAKE_RULE)/find.library.make.rule 
@@ -21,7 +21,7 @@ all: compile link
 compile: $(objects)
 
 link: $(objects)
-	$(CXX) $^ $(LDFLAGS) -o $(TARGET)
+	$(AR) $(ARFLAGS) $(TARGET) $(objects)
 
 clean:
 	rm -f $(TARGET) $(objects) $(dependence)

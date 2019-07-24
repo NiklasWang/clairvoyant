@@ -7,7 +7,7 @@ sources     = $(wildcard *.cpp)
 objects     = $(sources:.cpp=.o)
 dependence := $(sources:.cpp=.d)
 
-SHARED_LIBS =  libutils liblog libmemory libthreads libpal libalgorithms libexternal 
+SHARED_LIBS =  libutils liblog libmemory libthreads libpal libalgorithms
 STATIC_LIBS =  libsp libfreetype libutil
 
 CXXFLAGS += -I/usr/include/freetype2

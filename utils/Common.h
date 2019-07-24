@@ -14,7 +14,6 @@
 #include <fcntl.h>
 
 #include "PandoraInterface.h"
-#include "PandoraIntfInternal.h"
 #include "Version.h"
 #include "Modules.h"
 #include "Identifier.h"
