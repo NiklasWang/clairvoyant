@@ -8,10 +8,10 @@ sources     = $(wildcard *.cpp)
 objects     = $(sources:.cpp=.o)
 dependence := $(sources:.cpp=.d)
 
-SHARED_LIBS = liblog libthreads libmemory libcore  libutils libexternal
-STATIC_LIBS = libsp libyuv 
+SHARED_LIBS = liblog libmemory libcore libexternal
+STATIC_LIBS = libsp libyuv libthreads libutils
 
-CXXFLAGS += -I$(ROOT_DIR)/external/libyuv/include -I/usr/include/freetype2 -I/usr/include/libexif -I/opt/libjpeg-turbo/include
+CXXFLAGS += -I$(ROOT_DIR)/external/libyuv/libyuv/include -I/usr/include/freetype2 -I/usr/include/libexif -I/opt/libjpeg-turbo/include
 
 include $(MAKE_RULE)/find.library.make.rule 
 

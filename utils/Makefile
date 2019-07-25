@@ -9,7 +9,7 @@ objects     = $(sources:.cpp=.o)
 dependence := $(sources:.cpp=.d)
 
 SHARED_LIBS = liblog libcore libmemory
-STATIC_LIBS = libsp 
+STATIC_LIBS = libsp libthreads
 
 include $(MAKE_RULE)/find.library.make.rule 
 

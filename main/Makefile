@@ -12,14 +12,16 @@ dependence := $(sources:.cpp=.d)
 
 include $(MAKE_RULE)/find.all.modules.make.rule
 
-SHARED_LIBS =  
-STATIC_LIBS = 
+SHARED_LIBS = $(DYLIB_MODULE)
+STATIC_LIBS = $(STLIB_MODULE)
 
 include $(MAKE_RULE)/find.library.make.rule 
 
 -include $(dependence)
 
 include $(MAKE_RULE)/dependency.make.rule
+
+LDFLAGS += -L /opt/libjpeg-turbo/lib64 -L /usr/lib/x86_64-linux-gnu -lturbojpeg -lfreetype -lexif -Wl,-Bstatic -lutils -lutil -Wl,-Bdynamic -llog
 
 all: compile link
 

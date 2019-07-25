@@ -1,30 +1,36 @@
-CXX      = $(GLOBAL_CXX)
-AR       = $(GLOBAL_AR)
-CXXFLAGS = $(GLOBAL_CXXFLAGS)
-ARFLAGS  = $(GLOBAL_ARFLAGS)
+include $(MAKE_RULE)/color.print.make.rule
 
-TARGET      = libyuv$(strip $(DYLIB_EXT))
-sources     = $(wildcard *.cpp)
-objects     = $(sources:.cpp=.o)
-dependence := $(sources:.cpp=.d)
+TARGET  = libyuv$(strip $(STLIB_EXT))
+CURRDIR = $(shell pwd)
 
-SHARED_LIBS =
-STATIC_LIBS = 
+FILENAME = libyuv.a*
 
-include $(MAKE_RULE)/find.library.make.rule 
 
--include $(dependence)
+#exist = $(shell if [ -f $(CURRDIR)/$(TARGET) ]; then echo "exist"; else echo "notexist"; fi;)
 
-include $(MAKE_RULE)/dependency.make.rule
+all compile link:
+	@echo -e $(NOTICE_COLOR)"This module requires following packages, make sure they are installed in your system."$(RESTORE_COLOR)
+	@echo -e $(NOTICE_COLOR)" - automake, autopoint, libtool, gettext, etc."$(RESTORE_COLOR)
+ifneq ($(TARGET), $(notdir $(wildcard $(CURRDIR)/$(TARGET))))
+	$(call BUILD)
+endif
 
-all: compile link
+	$(call LINUX_INSTALL)
 
-compile: $(objects)
+define BUILD
+	cd libyuv;   \
+	make -f linux.mk
+endef
 
-link: $(objects)
-	$(CXX) $^ $(LDFLAGS) -o $(TARGET)
+
+define LINUX_INSTALL
+	cd libyuv; \
+	cp -ar ./${FILENAME} $(CURRDIR)/
+endef
 
 clean:
-	rm -f $(TARGET) $(objects) $(dependence)
+	cd libyuv; \
+	rm -rf $(CURRDIR)/$(TARGET)* \
+	rm source/*.o
 
 .PHONY: clean

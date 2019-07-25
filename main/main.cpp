@@ -4,18 +4,32 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <iostream>
 
 #include "Pandora.h"
 
+using namespace std;
 using namespace pandora;
+
 
 #define SIZE (20*1024*1024)
 
 int main(int argc, char *argv[])
 {
+#if 1
+    PlatformOpsIntf *platform = NULL;;
+    PandoraInterface* pand = new Pandora(platform);
+
+    if(pand == NULL)
+    {
+        cout<<"fail to new"<<endl;
+        return -1;
+    }
+#endif
     int fd = open("./1.yuv", O_RDWR);
     if (fd < 0) {
-        printf("fail open\n");
+        cout<<"fail open"<<endl;
+        return -1;
     }
     void *buf = malloc(SIZE);
     size_t size = read(fd, buf, SIZE);
@@ -23,9 +37,10 @@ int main(int argc, char *argv[])
     frame.frame = buf;
     frame.w = 3840;
     frame.h = 2160;
+    frame.stride = frame.w;
     frame.type = FRAME_TYPE_SNAPSHOT;
-//    Pandora::onFrameReady(frame);
-    printf("success\n");
+    pand->onFrameReady(frame);
+    cout<<"success"<<endl;
 
 
     return 0;
