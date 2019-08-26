@@ -21,7 +21,7 @@ include $(MAKE_RULE)/find.library.make.rule
 
 include $(MAKE_RULE)/dependency.make.rule
 
-LDFLAGS += -L /opt/libjpeg-turbo/lib64 -L /usr/lib/x86_64-linux-gnu -lturbojpeg -lfreetype -lexif -Wl,-Bstatic -lutils -lutil -Wl,-Bdynamic -llog
+LDFLAGS += -L $(ROOT_DIR)/external/freetype/freetype-2.6/objs/libs -L $(ROOT_DIR)/external/libjpeg-turbo/libjpeg-turbo/libs -L /usr/lib/x86_64-linux-gnu -I/usr/include/harfbuzz  -I/usr/include/libpng  -Wl,-Bstatic  -lfreetype -lturbojpeg -lpng -lexif -lutils -lutil -Wl,-Bdynamic -llog -lharfbuzz -lz
 
 all: compile link
 

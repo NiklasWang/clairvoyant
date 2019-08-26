@@ -18,7 +18,6 @@ GLOBAL_SHARED_LIBS = liblog libmemory
 ROOT_DIR  = $(shell pwd)
 MAKE_RULE = $(ROOT_DIR)/makerules
 OUT_DIR   = $(ROOT_DIR)/out
-OBJ_DIR   = $(OUT_DIR)/obj
 BIN_DIR   = $(ROOT_DIR)/release
 
 DYLIB_EXT = .so

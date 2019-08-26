@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     frame.h = 2160;
     frame.stride = frame.w;
     frame.type = FRAME_TYPE_SNAPSHOT;
-    pand->onFrameReady(frame);
+//    pand->onFrameReady(frame);
     cout<<"success"<<endl;
 
 

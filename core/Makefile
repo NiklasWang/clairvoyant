@@ -10,7 +10,8 @@ dependence := $(sources:.cpp=.d)
 SHARED_LIBS =  liblog libmemory
 STATIC_LIBS =  libsp libutil libutils libthreads libpal libalgorithms libyuv
 
-CXXFLAGS += -I/usr/include/freetype2
+CXXFLAGS += -I$(ROOT_DIR)/external/freetype/freetype-2.6/include
+
 
 include $(MAKE_RULE)/find.library.make.rule
 
