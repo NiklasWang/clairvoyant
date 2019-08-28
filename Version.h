@@ -3,7 +3,7 @@
 
 namespace pandora {
 
-#define PROJNAME "Clairvoyant"
+#define PROJNAME "clairvoyant"
 #define VERSION  "0.0.1"
 
 };

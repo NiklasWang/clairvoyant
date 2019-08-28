@@ -7,6 +7,11 @@
 #include <iostream>
 
 #include "Pandora.h"
+#include "PlatformOpsIntf.h"
+#include "PandoraSingleton.h"
+#include "PlatformOps.h"
+#include "Logs.h"
+#include "Common.h"
 
 using namespace std;
 using namespace pandora;
@@ -16,31 +21,40 @@ using namespace pandora;
 
 int main(int argc, char *argv[])
 {
-#if 1
-    PlatformOpsIntf *platform = NULL;;
-    PandoraInterface* pand = new Pandora(platform);
-
-    if(pand == NULL)
+    PlatformOpsIntf *mPlatformOps = new pandora::PlatformOps();
+    pandora::PandoraSingleton *mPandora;
+    LOGE(MODULE_OTHERS, "start.....");
+    if(mPlatformOps != NULL)
     {
-        cout<<"fail to new"<<endl;
+        mPandora = pandora::PandoraSingleton::getInstance(mPlatformOps);
+    }
+    if(mPandora == NULL)
+    {
+        LOGE(MODULE_OTHERS, "fail to new");
         return -1;
     }
-#endif
-    int fd = open("./1.yuv", O_RDWR);
+
+	char *fileName = "../1_water_mark_input_1566972572_dump_4096x3072.nv21";
+    int fd = open(fileName, O_RDWR);
     if (fd < 0) {
-        cout<<"fail open"<<endl;
+        LOGE(MODULE_OTHERS,"fail open %s", fileName);
         return -1;
     }
     void *buf = malloc(SIZE);
     size_t size = read(fd, buf, SIZE);
+
     FrameInfo frame;
     frame.frame = buf;
-    frame.w = 3840;
-    frame.h = 2160;
-    frame.stride = frame.w;
+    frame.w = 4096;
+    frame.h = 3072;
+    frame.stride = 64;
+	frame.scanline = 64;
     frame.type = FRAME_TYPE_SNAPSHOT;
-//    pand->onFrameReady(frame);
-    cout<<"success"<<endl;
+    frame.format = FRAME_FORMAT_YUV_420_NV21;
+    void *data = NULL;
+    mPandora->onParameterAvailable(data);
+    mPandora->onFrameReady(frame);
+    LOGE(MODULE_OTHERS, "success");
 
 
     return 0;

@@ -120,7 +120,6 @@ int32_t PandoraImpl::processTask(ThreadTaskBase *dat)
     assert(!ISNULL(dat));
     uint32_t rc = NO_ERROR;
     ThreadTaskType type = dat->getTaskType();
-
     switch (type) {
         case TT_PREPARE_PREVIEW: {
             ThreadTask<TT_PREPARE_PREVIEW> *evt =
@@ -212,7 +211,6 @@ int32_t PandoraImpl::addTaskToThread(void *value)
             evt->task = *reqArgs;
         }
     }
-
     if (SUCCEED(rc)) {
         rc = mThreads->run<ThreadTaskBase>(
             [this](ThreadTaskBase *_task) -> int32_t {

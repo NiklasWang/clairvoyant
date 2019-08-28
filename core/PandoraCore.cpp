@@ -1140,7 +1140,7 @@ int32_t PandoraCore::updateParameter(
     if (SUCCEED(rc)) {
         if (ISNULL(task.parm)) {
             LOGE(mModule, "Invalid parm");
-            rc = NOT_INITED;
+//            rc = NOT_INITED;
         }
     }
 
@@ -2345,7 +2345,7 @@ int32_t PandoraCore::onframeReadySync(TaskType &task)
             LOGE(mModule, "Failed to count frame, %d", rc);
         }
     }
-
+    isTargetFrame = 1;
     if (SUCCEED(rc)) {
         if (task.type == FRAME_TYPE_SNAPSHOT && isTargetFrame) {
             rc = drawWaterMark(task);
@@ -2367,7 +2367,6 @@ int32_t PandoraCore::onframeReady(ReqArgs<TT_FRAME_READY> &t)
         t.frame.w, t.frame.h, t.frame.stride,
         t.frame.scanline, t.frame.size,
         t.frame.format, t.frame.type, t.frame.ts);
-
     if (mAsyncSnapshot) {
         rc = onframeReadyAsync(task);
     } else {

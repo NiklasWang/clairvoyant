@@ -200,11 +200,11 @@ void __debug_log(const ModuleType module, const LogType type,
     __log_vsnprintf(buf, DBG_LOG_MAX_LEN, fmt, args);
     va_end(args);
 
-    print_log(type, "%s %s%s: %s:+%d: %s",
+    print_log(type, "%s %s%s: %s:+%d: %s\n",
         getProcessName(), getModuleShortName(module),
         getLogType(type), func, line, buf);
 
-    save_log("%s %s%s: %s:+%d: %s", getProcessName(),
+    save_log("%s %s%s: %s:+%d: %s\n", getProcessName(),
         getModuleShortName(module),
         getLogType(type), func, line, buf);
 }

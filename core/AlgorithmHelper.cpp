@@ -18,7 +18,7 @@ namespace pandora {
 #define MAX_ALIGN_SIZE    4096
 // Check strides mm_stream_calc_offset_snapshot() function
 #define FRAME_PAD_SIZE    4096
-#define DUMP_FILE_PATH    "/data/misc/camera"
+#define DUMP_FILE_PATH    "./"
 #define ALIGN_WITH_NUM(num, stride) \
     (((num) + (stride) - 1) & (~((stride) - 1)))
 

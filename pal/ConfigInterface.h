@@ -16,6 +16,7 @@ public:
 
 public:
     virtual bool isInited() = 0;
+#if 1
     virtual int32_t getFocusEndThres(FocusEndConfig &conf) = 0;
     virtual int32_t getExposureChangeThres(ExpChangeConfig &conf) = 0;
     virtual int32_t getNightStabilizerThres(NightStabConfig &conf) = 0;
@@ -23,6 +24,7 @@ public:
     virtual int32_t getExtendedMsgID(IdType &id) = 0;
     virtual int32_t getLowLightThres(LowLightConfig &conf) = 0;
     virtual int32_t getParmCategory(ParmsCategory &category) = 0;
+#endif
 
 public:
     virtual ~ConfigInterface() = default;

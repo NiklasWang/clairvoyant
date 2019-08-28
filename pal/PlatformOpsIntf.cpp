@@ -35,6 +35,7 @@ int32_t PlatformOpsIntf::requestHandler(PalParms *request)
 {
     int32_t rc = PARAM_INVALID;
     ASSERT_LOG(MODULE_PLATFORM_OPS, NOTNULL(request), "request shouldn't be NULL");
+    LOGE(MODULE_PAL_IMPL, " request->type %d, request->g.type %d", request->type, request->g.type);
 
     switch (request->type) {
         case PARM_TYPE_GET: {
@@ -71,6 +72,7 @@ int32_t PlatformOpsIntf::requestHandler(PalParms *request)
                 REQUEST_HANDLER_DEFAULT(g.type, "get parm");
             }
         } break;
+#if 0
         case PARM_TYPE_CONFIG: {
             switch (request->c.type) {
                 REQUEST_HANDLER_CASE(CONFIG_FOCUS_END_THRES,  getFocusEndConfig,  c.u.focusEnd);
@@ -83,6 +85,7 @@ int32_t PlatformOpsIntf::requestHandler(PalParms *request)
                 REQUEST_HANDLER_DEFAULT(c.type, "get config");
             }
         } break;
+#endif
         case PARM_TYPE_SET: {
             switch (request->s.type) {
                 REQUEST_HANDLER_CASE(SET_PARM_MULTI_SHOT,    setMultiShot,      s.u.multiShot);
@@ -176,7 +179,7 @@ DEFINE_GET_FUNCTIONS(PlatformPriv,   GET_PARM_PLATFORM_PRIV, platformPriv);
     \
         return rc; \
     }
-
+#if 0
 DEFINE_GET_CONFIG_FUNC(getHdrConfiThres,   ConfigInterface::ThresType, getHdrConfidenceThres);
 DEFINE_GET_CONFIG_FUNC(getExtMsgID,        ConfigInterface::IdType,    getExtendedMsgID);
 DEFINE_GET_CONFIG_FUNC(getFocusEndConfig,  FocusEndConfig,             getFocusEndThres);
@@ -184,6 +187,6 @@ DEFINE_GET_CONFIG_FUNC(getExpChangeConfig, ExpChangeConfig,            getExposu
 DEFINE_GET_CONFIG_FUNC(getNightStabConfig, NightStabConfig,            getNightStabilizerThres);
 DEFINE_GET_CONFIG_FUNC(getLowLightConfig,  LowLightConfig,             getLowLightThres);
 DEFINE_GET_CONFIG_FUNC(getParmsCategory,   ParmsCategory,              getParmCategory);
-
+#endif
 };
 
