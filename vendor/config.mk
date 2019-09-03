@@ -2,25 +2,25 @@
 
 # Switches
 PHOTO_SOLID_4 := n
-PHOTO_SOLID_5 := y
-BEAUTY_FACE   := y
-GENDER_DETECT := y
+PHOTO_SOLID_5 := n
+BEAUTY_FACE   := n
+GENDER_DETECT := n
 SMART_SELECT  := n
 SMART_SHOT    := n
 ANTI_SHAKE    := n
 NIGHT_SHOT    := n
 MOVIE_SOLID   := n
 PICTURE_ZOOM  := n
-FAIR_LIGHT    := y
-PICTURE_ZOOM2 := y
-MICRO_PLASTIC := y
+FAIR_LIGHT    := n
+PICTURE_ZOOM2 := n
+MICRO_PLASTIC := n
 STILL_BOKEH   := n
 STILL_BOKEHA  := n
 RT_BOKEH      := n
 DUAL_NIGHT    := n
 HDRT          := n
 HDRM          := n
-HDRM4         := y
+HDRM4         := n
 SUPER_RES     := n
 SINGLE_BOKEH  := n
 

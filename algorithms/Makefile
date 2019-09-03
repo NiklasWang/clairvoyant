@@ -4,7 +4,12 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS)
 ARFLAGS  = $(GLOBAL_ARFLAGS)
 
 TARGET      = libalgorithms$(strip $(STLIB_EXT))
-sources     = $(wildcard *.cpp)
+
+include $(ROOT_DIR)/vendor/config.mk
+CXXFLAGS    += $(patsubst %, -I$(ROOT_DIR)/%, $(sort $(CINCLUDES-Y)))
+
+sources    := WaterMark.cpp
+sources    += $(patsubst %, $(ROOT_DIR)/%, $(sort $(COMPILE-Y)))
 objects     = $(sources:.cpp=.o)
 dependence := $(sources:.cpp=.d)
 
@@ -12,6 +17,7 @@ SHARED_LIBS = liblog libmemory libcore
 STATIC_LIBS = libsp libutil libutils libthreads
 
 CXXFLAGS += -I$(ROOT_DIR)/external/freetype/freetype-2.6/include
+
 
 include $(MAKE_RULE)/find.library.make.rule 
 

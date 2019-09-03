@@ -12,6 +12,11 @@ STATIC_LIBS =  libsp libutil libutils libthreads libpal libalgorithms libyuv
 
 CXXFLAGS += -I$(ROOT_DIR)/external/freetype/freetype-2.6/include
 
+include $(ROOT_DIR)/vendor/config.mk
+CXXFLAGS    += $(CFLAGS-Y)
+SHARED_LIBS += $(LIBRARY-Y)
+STATIC_LIBS += $(STATICLIB-Y)
+
 
 include $(MAKE_RULE)/find.library.make.rule
 
