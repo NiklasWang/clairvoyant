@@ -30,6 +30,7 @@ enum AlgType {
     ALG_SINGLE_BOKEH,
     ALG_SINGLE_BOKEH_CAP,
     ALG_UTILS,
+    ALG_WATER_MARK,
     ALG_MAX_INVALID,
 };
 

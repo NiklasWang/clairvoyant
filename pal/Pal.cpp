@@ -14,7 +14,7 @@ Pal::Pal(PlatformOpsIntf *platform) :
         LOGI(mModule, "> Binding with platform hal ver: %s",
             mPlatform->whoamI());
     } else {
-        LOGE(mModule, "Fatal: platform hal not inited mPlatform %p inited %d", mPlatform, mPlatform->isInited());
+        LOGE(mModule, "Fatal: platform hal not inited");
     }
 }
 

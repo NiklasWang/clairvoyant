@@ -96,7 +96,7 @@ int32_t PalImpl::destruct()
 
     return RETURNIGNORE(rc, NOT_INITED);
 }
-#if 0
+
 ParmCategoryType PalImpl::getCategory(PalParms *parm)
 {
     int32_t rc = NO_ERROR;
@@ -146,7 +146,7 @@ ParmCategoryType PalImpl::getCategory(PalParms *parm)
 
     return result;
 }
-#endif
+
 int32_t PalImpl::waitForThread(ParmCategoryType category)
 {
     int32_t rc = NO_ERROR;
@@ -211,7 +211,7 @@ int32_t PalImpl::processTask(TaskInf *task)
     assert(!ISNULL(task));
 
     uint32_t rc = NO_ERROR;
-#if 0
+
     if (SUCCEED(rc)) {
         ParmCategoryType category = getCategory(task->getpp());
         if (category != PARM_CATEGORY_TYPE_FAST) {
@@ -222,7 +222,7 @@ int32_t PalImpl::processTask(TaskInf *task)
             }
         }
     }
-#endif
+
     if (SUCCEED(rc)) {
         rc = task->rc = doAction(task->getpp());
         if (!SUCCEED(rc)) {
@@ -241,7 +241,7 @@ int32_t PalImpl::taskDone(TaskInf *task, int32_t processrc)
         LOGD(mModule, "Failed to process evt %s rc %d, trying to ignore",
             task->getpp()->whoamI(), processrc);
     }
-#if 0
+
     if (SUCCEED(rc)) {
         ParmCategoryType category = getCategory(task->getpp());
         if (category != PARM_CATEGORY_TYPE_FAST) {
@@ -252,7 +252,7 @@ int32_t PalImpl::taskDone(TaskInf *task, int32_t processrc)
             }
         }
     }
-#endif
+
     return rc;
 }
 

@@ -27,6 +27,7 @@ static const char *const gAlgName[] = {
     [ALG_SINGLE_BOKEH]         = "single camera bokeh",
     [ALG_SINGLE_BOKEH_CAP]     = "single camera bokeh cap",
     [ALG_UTILS]                = "util algorithm",
+    [ALG_WATER_MARK]           = "water mark",
     [ALG_MAX_INVALID]          = "max invalid algorithm",
 };
 

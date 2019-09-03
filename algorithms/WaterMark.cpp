@@ -21,7 +21,7 @@ WaterMark::WaterMark(uint32_t /*argNum*/, va_list /*va*/) :
     mModule(MODULE_ALGORITHM),
     mPf(false),
     mPfCnt(AVERAGE_PERFORMANCE_COUNT),
-    mDump(true),
+    mDump(false),
     mParmValid(false)
 {
 }
@@ -272,7 +272,7 @@ int32_t WaterMark::process(TaskTypeT &task, ResultTypeT &result)
     }
 
     if (SUCCEED(rc)) {
-        mDump ? dumpNV21ToFile(task.data, "water_mark_input",
+        mDump ? dumpNV21ToFile(task.data, "water_mark_output",
             task.w, task.h, task.stride, task.scanline) : NO_ERROR;
         mPf ? PfLogger::getInstance()
             ->stop("water_mark_process") : NO_ERROR;
@@ -281,6 +281,8 @@ int32_t WaterMark::process(TaskTypeT &task, ResultTypeT &result)
             LOGI(mModule, "Water mark added to snapshot.");
         }
     }
+    dumpNV21ToJpeg(task.data, "water_mark_output",
+            task.w, task.h, task.stride, task.scanline);
 
     if (SUCCEED(rc)) {
         result.valid = true;

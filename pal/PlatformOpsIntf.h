@@ -56,15 +56,6 @@ private:
 
     #define DECLARE_CONFIG_FUNC(func, type) \
         virtual int32_t func(type &res);
-#if 0
-    DECLARE_CONFIG_FUNC(getHdrConfiThres,   ConfigInterface::ThresType);
-    DECLARE_CONFIG_FUNC(getExtMsgID,        ConfigInterface::IdType);
-    DECLARE_CONFIG_FUNC(getFocusEndConfig,  FocusEndConfig);
-    DECLARE_CONFIG_FUNC(getExpChangeConfig, ExpChangeConfig);
-    DECLARE_CONFIG_FUNC(getNightStabConfig, NightStabConfig);
-    DECLARE_CONFIG_FUNC(getLowLightConfig,  LowLightConfig);
-    DECLARE_CONFIG_FUNC(getParmsCategory,   ParmsCategory);
-#endif
     virtual int32_t setMultiShot(MultiShotParm &parm) = 0;
     virtual int32_t setMultiExposure(MultiExporeParm &parm) = 0;
     virtual int32_t setPlatformPrivSetting(PlatformPrivSet &parm) = 0;

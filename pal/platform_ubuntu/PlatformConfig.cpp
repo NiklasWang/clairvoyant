@@ -2,114 +2,7 @@
 #include "PlatformConfig.h"
 
 namespace pandora {
-#if 0
-const ConfigInterface::ConfigSettings Config::gSettings[] = {
-    {   // Camera 0, back camera
-        .focusEnd = {
-            .macroEndRatio    = 50.0,
-            .infiniteEndRatio = 101.0,
-        },
-        .expChange = {
-            .luxChangeThres      = 102400,
-            .isoChangeThres      = 400,
-            .exposureChangeThres = 20,
-            .apertureChangeThres = 9,
-        },
-        .nightStab = {
-            .luxThre       = 1024,
-            .isoThres      = 1000,
-            .exposureThres = 1.0,
-            .apertureThres = 1.0,
-        },
-        .lowLight = {
-            .luxThre       = 1024,
-            .isoThres      = 1200,
-            .exposureThres = 1.0,
-            .apertureThres = 1.0,
-        },
-        .hdrConf  = 0.4,
-        .extendId = 0x1FFF,
-    },
-    {   // Camera 1, front camera
-        .focusEnd = {
-            .macroEndRatio    = 50.0,
-            .infiniteEndRatio = 101.0,
-        },
-        .expChange = {
-            .luxChangeThres      = 102400,
-            .isoChangeThres      = 400,
-            .exposureChangeThres = 20,
-            .apertureChangeThres = 9,
-        },
-        .nightStab = {
-            .luxThre       = 1024,
-            .isoThres      = 1600,
-            .exposureThres = 1.0,
-            .apertureThres = 1.0,
-        },
-        .lowLight = {
-            .luxThre       = 1024,
-            .isoThres      = 600,
-            .exposureThres = 1.0,
-            .apertureThres = 1.0,
-        },
-        .hdrConf  = 0.4,
-        .extendId = 0x1FFF,
-    },
-    {   // Camera 2, back mono camera
-        .focusEnd = {
-            .macroEndRatio    = 50.0,
-            .infiniteEndRatio = 101.0,
-        },
-        .expChange = {
-            .luxChangeThres      = 102400,
-            .isoChangeThres      = 400,
-            .exposureChangeThres = 20,
-            .apertureChangeThres = 9,
-        },
-        .nightStab = {
-            .luxThre       = 1024,
-            .isoThres      = 102400,
-            .exposureThres = 1.0,
-            .apertureThres = 1.0,
-        },
-        .lowLight = {
-            .luxThre       = 1024,
-            .isoThres      = 102400,
-            .exposureThres = 1.0,
-            .apertureThres = 1.0,
-        },
-        .hdrConf  = 0.4,
-        .extendId = 0x1FFF,
-    },
-    {   // Camera 3, back camera, 2nd vendor
-        .focusEnd = {
-            .macroEndRatio    = 50.0,
-            .infiniteEndRatio = 101.0,
-        },
-        .expChange = {
-            .luxChangeThres      = 102400,
-            .isoChangeThres      = 400,
-            .exposureChangeThres = 20,
-            .apertureChangeThres = 9,
-        },
-        .nightStab = {
-            .luxThre       = 1024,
-            .isoThres      = 1200,
-            .exposureThres = 1.0,
-            .apertureThres = 1.0,
-        },
-        .lowLight = {
-            .luxThre       = 1024,
-            .isoThres      = 1200,
-            .exposureThres = 1.0,
-            .apertureThres = 1.0,
-        },
-        .hdrConf  = 0.4,
-        .extendId = 0x1FFF,
-    },
-};
-#endif
+
 
 #define SET_PARM_CATEGORY(TYPE, GSCO, PARM, CAT) \
     { \
@@ -167,16 +60,9 @@ const ParmCategory Config::gParmCategory[] = {
     SET_PARM_CATEGORY(PARM_TYPE_OTHERS, o, OTHER_TYPE_EVT_CALLBACK,  PARM_CATEGORY_TYPE_FAST)
     SET_PARM_CATEGORY(PARM_TYPE_OTHERS, o, OTHER_TYPE_DATA_CALLBACK, PARM_CATEGORY_TYPE_FAST)
 };
-#if 0
-Config::Config(uint32_t camId) :
-    ConfigInterface(camId)
+Config::Config():ConfigInterface()
 {
-    if (mCamId >= ARRAYSIZE(gSettings)) {
-        LOGE(mModule, "Invalid camera id %d/%d",
-            mCamId, ARRAYSIZE(gSettings));
-    }
 }
-
 bool Config::isInited()
 {
     return true;
@@ -191,44 +77,6 @@ bool Config::isInited()
 
 #define FINISH_CHECK_INIT() \
     }
-
-#define GET_CONFIG(lhs, rhs) \
-    ({ \
-        BEGIN_CHECK_INIT(); \
-        lhs = gSettings[mCamId].rhs; \
-        FINISH_CHECK_INIT(); \
-        __rc; \
-    })
-
-int32_t Config::getFocusEndThres(FocusEndConfig &conf)
-{
-    return GET_CONFIG(conf, focusEnd);
-}
-
-int32_t Config::getExposureChangeThres(ExpChangeConfig &conf)
-{
-    return GET_CONFIG(conf, expChange);
-}
-
-int32_t Config::getNightStabilizerThres(NightStabConfig &conf)
-{
-    return GET_CONFIG(conf, nightStab);
-}
-
-int32_t Config::getHdrConfidenceThres(float &conf)
-{
-    return GET_CONFIG(conf, hdrConf);
-}
-
-int32_t Config::getExtendedMsgID(int32_t &conf)
-{
-    return GET_CONFIG(conf, extendId);
-}
-
-int32_t Config::getLowLightThres(LowLightConfig &conf)
-{
-    return GET_CONFIG(conf, lowLight);
-}
 
 inline int32_t getAllParmSize()
 {
@@ -250,6 +98,6 @@ int32_t Config::getParmCategory(ParmsCategory &result)
     FINISH_CHECK_INIT();
     return __rc;
 }
-#endif
+
 };
 

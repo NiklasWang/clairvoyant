@@ -49,9 +49,9 @@ private:
     int32_t attachThread(T &result, SyncTypeE sync);
 
     int32_t doAction(PalParms *parm);
-#if 0
+
     ParmCategoryType getCategory(PalParms *parm);
-#endif
+
     int32_t waitForThread(ParmCategoryType category);
     int32_t releaseThread(ParmCategoryType category);
 
