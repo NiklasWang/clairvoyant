@@ -10,7 +10,6 @@
 #include "PlatformOpsIntf.h"
 #include "PandoraSingleton.h"
 #include "PlatformOps.h"
-#include "Logs.h"
 #include "Common.h"
 #include "CameraParameters.h"
 #include "AlgorithmType.h"
@@ -36,15 +35,15 @@ re_start:
     switch(algo)
     {
         case ALG_BEAUTY_FACE : {
-            param->set(KEY_BEAUTY_FACE, BEAUTY_MODE_ON);
+            param->set(CameraParameters::KEY_BEAUTY_FACE, CameraParameters::ON);
             break;
         }
         case ALG_WATER_MARK : {
-            param->set(KEY_WATER_MARK, MODE_ON);
+            param->set(CameraParameters::KEY_WATER_MARK, CameraParameters::ON);
             break;
         }
         case ALG_NIGHT_SHOT : {
-            param->set(KEY_NIGHT_SHOT, MODE_ON);
+            param->set(CameraParameters::KEY_NIGHT_SHOT, CameraParameters::ON);
             break;
         }
         case ALG_MAX_INVALID : {
@@ -104,6 +103,7 @@ int main(int argc, char *argv[])
         mPandora->onParameterAvailable(data);
         mPandora->takePicture();
         mPandora->onFrameReady(frame);
+        mPandora->pictureTaken();
     }
     LOGE(MODULE_OTHERS, "success");
     return 0;

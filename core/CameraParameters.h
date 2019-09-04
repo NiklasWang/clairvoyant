@@ -1,7 +1,8 @@
 #ifndef _CAMERA_PARAMETERS_H
 #define _CAMERA_PARAMETERS_H
 
-#include <vector>
+#include <map>
+
 using namespace std;
 
 namespace pandora {
@@ -22,71 +23,6 @@ struct Size {
 };
 
 enum {
-    KEY_SUPPORTED_PICTURE_SIZES,
-    KEY_PICTURE_FORMAT,
-    KEY_SUPPORTED_PICTURE_FORMATS,
-    KEY_JPEG_THUMBNAIL_WIDTH,
-    KEY_JPEG_THUMBNAIL_HEIGHT,
-    KEY_SUPPORTED_JPEG_THUMBNAIL_SIZES,
-    KEY_JPEG_THUMBNAIL_QUALITY,
-    KEY_JPEG_QUALITY,
-    KEY_ROTATION,
-    KEY_GPS_LATITUDE,
-    KEY_GPS_LONGITUDE,
-    KEY_GPS_ALTITUDE,
-    KEY_GPS_TIMESTAMP,
-    KEY_GPS_PROCESSING_METHOD,
-    KEY_WHITE_BALANCE,
-    KEY_SUPPORTED_WHITE_BALANCE,
-    KEY_EFFECT,
-    KEY_SUPPORTED_EFFECTS,
-    KEY_ANTIBANDING,
-    KEY_SUPPORTED_ANTIBANDING,
-    KEY_SCENE_MODE,
-    KEY_SUPPORTED_SCENE_MODES,
-    KEY_FLASH_MODE,
-    KEY_SUPPORTED_FLASH_MODES,
-    KEY_FOCUS_MODE,
-    KEY_SUPPORTED_FOCUS_MODES,
-    KEY_MAX_NUM_FOCUS_AREAS,
-    KEY_FOCUS_AREAS,
-    KEY_FOCAL_LENGTH,
-    KEY_HORIZONTAL_VIEW_ANGLE,
-    KEY_VERTICAL_VIEW_ANGLE,
-    KEY_EXPOSURE_COMPENSATION,
-    KEY_MAX_EXPOSURE_COMPENSATION,
-    KEY_MIN_EXPOSURE_COMPENSATION,
-    KEY_EXPOSURE_COMPENSATION_STEP,
-    KEY_AUTO_EXPOSURE_LOCK,
-    KEY_AUTO_EXPOSURE_LOCK_SUPPORTED,
-    KEY_AUTO_WHITEBALANCE_LOCK,
-    KEY_AUTO_WHITEBALANCE_LOCK_SUPPORTED,
-    KEY_MAX_NUM_METERING_AREAS,
-    KEY_METERING_AREAS,
-    KEY_VIDEO_FRAME_FORMAT,
-    KEY_VIDEO_SIZE,
-    KEY_SUPPORTED_VIDEO_SIZES,
-    KEY_PREFERRED_PREVIEW_SIZE_FOR_VIDEO,
-    KEY_MAX_NUM_DETECTED_FACES_HW,
-    KEY_MAX_NUM_DETECTED_FACES_SW,
-    KEY_RECORDING_HINT,
-    KEY_VIDEO_SNAPSHOT_SUPPORTED,
-    KEY_VIDEO_STABILIZATION,
-    KEY_VIDEO_STABILIZATION_SUPPORTED,
-    KEY_LIGHTFX,
-    KEY_BEAUTY_FACE,
-    KEY_BEAUTY_FACE_LEVEL,
-    KEY_LONG_SHOT,
-    KEY_SMART_SHOT,
-    KEY_NIGHT_SHOT,
-    KEY_FAIRLIGHT_MODE,
-    KEY_WATER_MARK,
-    KEY_QC_SINGLE_BOKEH,
-    KEY_QC_SINGLE_BOKEH_LEVEL,
-    KEY_INVALID,
-};
-
-enum {
     MODE_OFF,
     MODE_ON,
     MODE_MANUAL,
@@ -99,11 +35,69 @@ public:
     CameraParameters();
     ~CameraParameters();
 
-    void set(int key, int value);
-    int get(int key) const;
+    void set(const char *  key, const char * value);
+    void set(const char *  key, int value);
+    void setFloat(const char * key, float value);
+    const char* get(const char *  key) const;
+    int getInt(const char *  key) const;
+    float getFloat(const char *key) const;
+
+    static const char ON[];
+    static const char OFF[];
+    static const char TRUE[];
+    static const char FALSE[];
+
+    static const char KEY_WATER_MARK[];
+    static const char KEY_NIGHT_SHOT[];
+    static const char KEY_BEAUTY_FACE[];
+    static const char KEY_BEAUTY_FACE_LEVEL[];
+    static const char KEY_LONG_SHOT[];
+    static const char KEY_SMART_SHOT[];
+    static const char KEY_FAIRLIGHT_MODE[];
+    static const char KEY_QC_SINGLE_BOKEH[];
+    static const char KEY_QC_SINGLE_BOKEH_LEVEL[];
+    static const char KEY_SCENE_MODE[];
+    static const char KEY_FLASH_MODE[];
+    static const char KEY_VIDEO_PLIP[];
+    static const char KEY_MOVIE_SOLID[];
+    static const char KEY_LONG_EXPOSURE[];
+    static const char KEY_BLUR_LEVEL[];
+    static const char KEY_ROTATION[];
+
+    static const char FLASH_MODE_OFF[];
+    static const char FLASH_MODE_AUTO[];
+    static const char FLASH_MODE_ON[];
+    static const char FLASH_MODE_RED_EYE[];
+    static const char FLASH_MODE_TORCH[];
+
+    static const char SCENE_MODE_AUTO[];
+    static const char SCENE_MODE_ACTION[];
+    static const char SCENE_MODE_PORTRAIT[];
+    static const char SCENE_MODE_LANDSCAPE[];
+    static const char SCENE_MODE_NIGHT[];
+    static const char SCENE_MODE_NIGHT_PORTRAIT[];
+    static const char SCENE_MODE_THEATRE[];
+    static const char SCENE_MODE_BEACH[];
+    static const char SCENE_MODE_SNOW[];
+    static const char SCENE_MODE_SUNSET[];
+    static const char SCENE_MODE_STEADYPHOTO[];
+    static const char SCENE_MODE_FIREWORKS[];
+    static const char SCENE_MODE_SPORTS[];
+    static const char SCENE_MODE_PARTY[];
+    static const char SCENE_MODE_CANDLELIGHT[];
+    static const char SCENE_MODE_BARCODE[];
+    static const char SCENE_MODE_HDR[];
+    static const char SCENE_MODE_ASD[];
+
+    static const char FAIRLIGHT_VALUE_RAINBOW[];
+    static const char FAIRLIGHT_VALUE_MORNING[];
+    static const char FAIRLIGHT_VALUE_WAVE[];
+    static const char FAIRLIGHT_VALUE_CONTOUR[];
+    static const char FAIRLIGHT_VALUE_SHADOW[];
+    static const char FAIRLIGHT_VALUE_STAGE[];
 
 private:
-	int KEY[KEY_INVALID];
+    std::map<std::string, std::string> mMap;
 };
 
 };
