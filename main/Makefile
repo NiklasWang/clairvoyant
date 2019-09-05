@@ -23,6 +23,9 @@ include $(MAKE_RULE)/dependency.make.rule
 
 LDFLAGS += -L $(ROOT_DIR)/external/freetype/freetype-2.6/objs/libs -L $(ROOT_DIR)/external/libjpeg-turbo/libjpeg-turbo/libs -L /usr/lib/x86_64-linux-gnu -I/usr/include/harfbuzz  -I/usr/include/libpng  -Wl,-Bstatic  -lfreetype -lturbojpeg -lpng -lexif -lutils -lutil -Wl,-Bdynamic -llog -lharfbuzz -lz
 
+CXXFLAGS += -I$(ROOT_DIR)/test/
+LDFLAGS += -L $(ROOT_DIR)/test/
+
 all: compile link
 
 compile: $(objects)

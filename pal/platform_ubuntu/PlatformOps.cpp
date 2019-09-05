@@ -3,7 +3,8 @@
 #include "Platform.h"
 #include "CameraStatus.h"
 #include "PlatformConfig.h"
-#include "CameraParameters.h"
+#include "PlatformParameters.h"
+#include "Parameters.h"
 
 #undef LOGD
 #undef LOGI
@@ -98,12 +99,12 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
 {
     int32_t rc = NO_ERROR;
 
-    const CameraParameters *parm =
-        static_cast<const CameraParameters *>(data);
+    const Parameters *parm =
+        static_cast<const Parameters *>(data);
 
     if (SUCCEED(rc)) {
         mParmValid[GET_PARM_BEAUTY_FACE] = false;
-        const char *val = parm->get(CameraParameters::KEY_BEAUTY_FACE);
+        const char *val = parm->get(KEY_BEAUTY_FACE);
         if (NOTNULL(val)) {
             if (!strcmp(val, "auto")) {
                 mGetParms[GET_PARM_BEAUTY_FACE].beautySetting.mode =
@@ -112,7 +113,7 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
             } else if (!strcmp(val, "manual")) {
                 mGetParms[GET_PARM_BEAUTY_FACE].beautySetting.mode =
                     BEAUTY_MODE_MANUAL;
-                const char *val2 = parm->get(CameraParameters::KEY_BEAUTY_FACE_LEVEL);
+                const char *val2 = parm->get(KEY_BEAUTY_FACE_LEVEL);
                 mGetParms[GET_PARM_BEAUTY_FACE].beautySetting.strength =
                     NOTNULL(val2)? atoi(val2) : 0;
             } else {
@@ -126,11 +127,11 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
 
     if (SUCCEED(rc)) {
         mParmValid[GET_PARM_HDR_MODE] = false;
-        const char *val = parm->get(CameraParameters::KEY_SCENE_MODE);
+        const char *val = parm->get(KEY_SCENE_MODE);
         if (NOTNULL(val)) {
-            if (!strcmp(val, CameraParameters::SCENE_MODE_HDR)) {
+            if (!strcmp(val, SCENE_MODE_HDR)) {
                 mGetParms[GET_PARM_HDR_MODE].hdrMode = HDR_MODE_FORCED_ON;
-            } else if (!strcmp(val, CameraParameters::SCENE_MODE_ASD)) {
+            } else if (!strcmp(val, SCENE_MODE_ASD)) {
                 mGetParms[GET_PARM_HDR_MODE].hdrMode = HDR_MODE_AUTO;
             } else {
                 mGetParms[GET_PARM_HDR_MODE].hdrMode = HDR_MODE_FORCED_OFF;
@@ -140,23 +141,8 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
     }
 
     if (SUCCEED(rc)) {
-        mParmValid[GET_PARM_FLASH_MODE] = false;
-        const char *val = parm->get(CameraParameters::KEY_FLASH_MODE);
-        if (NOTNULL(val)) {
-            if (!strcmp(val, CameraParameters::FLASH_MODE_ON)) {
-                mGetParms[GET_PARM_FLASH_MODE].flashMode = FLASH_MODE_FORCED_ON;
-            } else if (!strcmp(val, CameraParameters::FLASH_MODE_AUTO)) {
-                mGetParms[GET_PARM_FLASH_MODE].flashMode = FLASH_MODE_AUTO;
-            } else {
-                mGetParms[GET_PARM_FLASH_MODE].flashMode = FLASH_MODE_FORCED_OFF;
-            }
-            mParmValid[GET_PARM_FLASH_MODE] = true;
-        }
-    }
-
-    if (SUCCEED(rc)) {
         mParmValid[GET_PARM_LONG_SHOT] = false;
-        const char *val = parm->get(CameraParameters::KEY_LONG_SHOT);
+        const char *val = parm->get(KEY_LONG_SHOT);
         if (NOTNULL(val)) {
             int32_t on = !strcmp(val, "on");
             mGetParms[GET_PARM_LONG_SHOT].longShot =
@@ -167,7 +153,7 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
 
     if (SUCCEED(rc)) {
         mParmValid[GET_PARM_SMART_SHOT] = false;
-        const char *val = parm->get(CameraParameters::KEY_SMART_SHOT);
+        const char *val = parm->get(KEY_SMART_SHOT);
         if (NOTNULL(val)) {
             int32_t on = !strcmp(val, "on");
             mGetParms[GET_PARM_SMART_SHOT].smartShot =
@@ -178,7 +164,7 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
 
     if(SUCCEED(rc)){
         mParmValid[GET_PARM_VIDEO_STAB] = false;
-        const char *val = parm->get(CameraParameters::KEY_MOVIE_SOLID);
+        const char *val = parm->get(KEY_MOVIE_SOLID);
         if (NOTNULL(val)) {
             int32_t on = !strcmp(val, "on");
             mGetParms[GET_PARM_VIDEO_STAB].videoStab =
@@ -189,7 +175,7 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
 
     if(SUCCEED(rc)){
         mParmValid[GET_PARM_FLIP_MODE] = false;
-        const char *val = parm->get(CameraParameters::KEY_VIDEO_PLIP);
+        const char *val = parm->get(KEY_VIDEO_PLIP);
         if (NOTNULL(val)) {
              if (!strcmp(val, "flip-v")) {
                 mGetParms[GET_PARM_FLIP_MODE].flipMode.v = true;
@@ -208,10 +194,10 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
 
     if(SUCCEED(rc)){
         mParmValid[GET_PARM_IMAGE_STAB] = false;
-        const char *val = parm->get(CameraParameters::KEY_SCENE_MODE);
+        const char *val = parm->get(KEY_SCENE_MODE);
         if(NOTNULL(val)){
-            int32_t on = !strcmp(val, CameraParameters::SCENE_MODE_NIGHT) ||
-                !strcmp(val, CameraParameters::SCENE_MODE_NIGHT_PORTRAIT);
+            int32_t on = !strcmp(val, SCENE_MODE_NIGHT) ||
+                !strcmp(val, SCENE_MODE_NIGHT_PORTRAIT);
             mGetParms[GET_PARM_IMAGE_STAB].imageStab =
                 on ? IMAGE_STAB_MODE_ON : IMAGE_STAB_MODE_OFF;
             mParmValid[GET_PARM_IMAGE_STAB] = true;
@@ -220,7 +206,7 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
 
     if (SUCCEED(rc)) {
         mParmValid[GET_PARM_NIGHT_SHOT] = false;
-        const char *val = parm->get(CameraParameters::KEY_NIGHT_SHOT);
+        const char *val = parm->get(KEY_NIGHT_SHOT);
         if (NOTNULL(val)) {
             if (!strcmp(val, "on")) {
                 mGetParms[GET_PARM_NIGHT_SHOT].nightShot = NIGHT_SHOT_MODE_ON;
@@ -235,7 +221,7 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
 
     if(SUCCEED(rc)){
         mParmValid[GET_PARM_LONG_EXPOSURE] = false;
-        const char *val = parm->get(CameraParameters::KEY_LONG_EXPOSURE);
+        const char *val = parm->get(KEY_LONG_EXPOSURE);
         if(NOTNULL(val)){
             int32_t on = !strcmp(val, "on");
             mGetParms[GET_PARM_LONG_EXPOSURE].longExposure.on = on;
@@ -253,19 +239,19 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
 
     if (SUCCEED(rc)) {
         mParmValid[GET_PARM_FAIRLIGHT] = false;
-        const char *val = parm->get(CameraParameters::KEY_FAIRLIGHT_MODE);
+        const char *val = parm->get(KEY_FAIRLIGHT_MODE);
         if (NOTNULL(val)) {
-            if (!strcmp(val, CameraParameters::FAIRLIGHT_VALUE_RAINBOW)) {
+            if (!strcmp(val, FAIRLIGHT_VALUE_RAINBOW)) {
                 mGetParms[GET_PARM_FAIRLIGHT].fairLightMode= FAIRLIGHT_RAINBOW;
-            } else if (!strcmp(val, CameraParameters::FAIRLIGHT_VALUE_MORNING)) {
+            } else if (!strcmp(val, FAIRLIGHT_VALUE_MORNING)) {
                 mGetParms[GET_PARM_FAIRLIGHT].fairLightMode = FAIRLIGHT_MORNING;
-            } else if (!strcmp(val, CameraParameters::FAIRLIGHT_VALUE_WAVE)) {
+            } else if (!strcmp(val, FAIRLIGHT_VALUE_WAVE)) {
                 mGetParms[GET_PARM_FAIRLIGHT].fairLightMode = FAIRLIGHT_WAVE;
-            } else if (!strcmp(val, CameraParameters::FAIRLIGHT_VALUE_CONTOUR)) {
+            } else if (!strcmp(val, FAIRLIGHT_VALUE_CONTOUR)) {
                 mGetParms[GET_PARM_FAIRLIGHT].fairLightMode = FAIRLIGHT_CONTOUR;
-            } else if (!strcmp(val, CameraParameters::FAIRLIGHT_VALUE_SHADOW)) {
+            } else if (!strcmp(val, FAIRLIGHT_VALUE_SHADOW)) {
                 mGetParms[GET_PARM_FAIRLIGHT].fairLightMode = FAIRLIGHT_SHADOW;
-            } else if (!strcmp(val, CameraParameters::FAIRLIGHT_VALUE_STAGE)) {
+            } else if (!strcmp(val, FAIRLIGHT_VALUE_STAGE)) {
                 mGetParms[GET_PARM_FAIRLIGHT].fairLightMode = FAIRLIGHT_STAGE;
             } else {
                 mGetParms[GET_PARM_FAIRLIGHT].fairLightMode = FAIRLIGHT_NONE;
@@ -276,7 +262,7 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
 
     if (SUCCEED(rc)) {
         mParmValid[GET_PARM_ROTATION] = false;
-        int32_t rotation = parm->getInt(CameraParameters::KEY_ROTATION);
+        int32_t rotation = parm->getInt(KEY_ROTATION);
         if (rotation != -1) {
             switch (rotation) {
                 case 0:
@@ -318,9 +304,9 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
         mGetParms[GET_PARM_WATER_MARK].watermark.enableLogo          = false;
         mGetParms[GET_PARM_WATER_MARK].watermark.enableTexts         = false;
 
-        const char *val = parm->get(CameraParameters::KEY_WATER_MARK);
+        const char *val = parm->get(KEY_WATER_MARK);
         if(NOTNULL(val)) {
-            int32_t on = !strcmp(val, CameraParameters::ON);
+            int32_t on = !strcmp(val, ON);
             if (on) {
                 mGetParms[GET_PARM_WATER_MARK].watermark.enableProduct = true;
             } else {
@@ -340,8 +326,8 @@ int32_t PlatformOps::onParameterAvailable(const void *data)
         SingleBokehMode on = SINGLE_CAM_BOKEH_OFF;
         int32_t blurLevel = 0;
         mParmValid[GET_PARM_SINGLE_BOKEH] = false;
-        const char *val1 = parm->get(CameraParameters::KEY_QC_SINGLE_BOKEH);
-        const char *val2 = parm->get(CameraParameters::KEY_QC_SINGLE_BOKEH_LEVEL);
+        const char *val1 = parm->get(KEY_QC_SINGLE_BOKEH);
+        const char *val2 = parm->get(KEY_QC_SINGLE_BOKEH_LEVEL);
         on = NOTNULL(val1) ? ((atoi(val1) == 1) ? SINGLE_CAM_BOKEH_ON : on) : on;
         blurLevel = NOTNULL(val2) ? atoi(val2) : blurLevel;
         mGetParms[GET_PARM_SINGLE_BOKEH].singleBokeh.mode = on;

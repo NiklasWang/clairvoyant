@@ -35,7 +35,6 @@ int32_t PlatformOpsIntf::requestHandler(PalParms *request)
 {
     int32_t rc = PARAM_INVALID;
     ASSERT_LOG(MODULE_PLATFORM_OPS, NOTNULL(request), "request shouldn't be NULL");
-    LOGE(MODULE_PAL_IMPL, "request->g.type %d", request->g.type);
 
     switch (request->type) {
         case PARM_TYPE_GET: {

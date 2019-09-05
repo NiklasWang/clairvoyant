@@ -43,7 +43,7 @@ build: all
 
 exclude_dirs  =
 
-link_order  = utils log threads resources pal external memory algorithms
+link_order  = test utils log threads resources pal external memory algorithms
 link_order += makerules core main
 
 export

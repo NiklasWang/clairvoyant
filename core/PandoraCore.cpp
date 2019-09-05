@@ -730,332 +730,6 @@ int32_t PandoraCore::updateMetadata(
 {
     int32_t rc = NO_ERROR;
 
-    if (SUCCEED(rc)) {
-        if (NOTNULL(mPal)) {
-            rc = mPal->onMetadataAvailable(task.ptr);
-            if (!SUCCEED(rc)) {
-                LOGE(mModule, "Failed to notify metadata");
-            }
-        } else {
-            rc = NOT_INITED;
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        AEInfo ae;
-        rc = mPal->getParm(ae);
-        if (SUCCEED(rc)) {
-            mStatusMgr.push_back(ae);
-        }
-
-        AFInfo af;
-        rc = mPal->getParm(af);
-        if (SUCCEED(rc)) {
-            mStatusMgr.push_back(af);
-        }
-
-        RESETRESULT(rc);
-    }
-
-    if (SUCCEED(rc)) {
-        bool isMacro = false;
-        if (mStatusMgr.checkFocusChanged(isMacro)) {
-            sendEvtCallback(EEVT_FOCUS_CHANGED, isMacro);
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        CamStatusMgr::LumDir direction =
-            CamStatusMgr::LUMINANCE_TOWARDS_UNKNOWN;
-        if (mStatusMgr.checkExposureChanged(direction)) {
-            sendEvtCallback(EEVT_LUMINANCE_CHANGED, direction);
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        if (checkFlashChanged()) {
-            if (mStatusMgr.checkAutoFlashOn()) {
-                sendEvtCallback(EEVT_FLASH_STATUS, FLASH_ON_EVT);
-            } else {
-                sendEvtCallback(EEVT_FLASH_STATUS, FLASH_OFF_EVT);
-            }
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        bool isLowLight = false;
-        if (mStatusMgr.checkLowLightChanged(isLowLight)) {
-            sendEvtCallback(EEVT_LIGHT_STATUS,
-                isLowLight ? LOW_LIGHT_EVT : NORMAL_LIGHT_EVT);
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        FaceInfo faces;
-        rc = mPal->getParm(faces);
-        if (SUCCEED(rc) && faces.size() > 0) {
-            FaceInfo::Face face = faces.get(0);
-            sendEvtCallback(EEVT_PORTRAIT_BLINK,
-                face.blink ? PORTRAIT_EYE_BLINK_EVT : PORTRAIT_EYE_OPEN_EVT);
-        }
-        RESETRESULT(rc);
-    }
-#if 0
-    if (SUCCEED(rc)) {
-        mAlgStatus[ALG_IMAGE_STABILIZATION].enable =
-            checkImageStabOn();
-
-        if (mAlgStatus[ALG_IMAGE_STABILIZATION].enable) {
-            AEInfo info;
-            rc = mPal->getParm(info);
-            if (SUCCEED(rc)) {
-                AlgTraits<PhotoSolid>::ParmType parm;
-                parm.lux_index = info.lux_index;
-                parm.iso_value = info.iso_value;
-                parm.cameraid  = 0;
-
-                CameraTypeInf cam;
-                rc = mPal->getParm(cam);
-                if (cam.type == CameraTypeInf::CAMERA_TYPE_BACK_0) {
-                    parm.cameraid = 0;
-                } else if (cam.type == CameraTypeInf::CAMERA_TYPE_FRONT_0) {
-                    parm.cameraid = 1;
-                }
-                sp<IAlgorithm> alg = getAlgorithm(ALG_IMAGE_STABILIZATION);
-                if (NOTNULL(alg)) {
-                    rc = alg->config(parm);
-                    if (!SUCCEED(rc)) {
-                        LOGE(mModule, "Failed to config %s, %d",
-                            alg->whoamI(), rc);
-                    }
-                }
-            }
-            RESETRESULT(rc);
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        if (mAlgStatus[ALG_HDR_CHECKER].enable) {
-            AEInfo info;
-            rc = mPal->getParm(info);
-            if (SUCCEED(rc)) {
-                AlgTraits<HDRChecker>::ParmType parm;
-                parm.lux_index    = info.lux_index;
-                parm.luma_target  = info.luma_target;
-                parm.hdr_force_on = mCamStatus.HdrStatus == HDR_MODE_FORCED_ON;
-                parm.camera_id    = 0;
-
-                CameraTypeInf camid;
-                rc = mPal->getParm(camid);
-                if (SUCCEED(rc)) {
-                    if (camid.isFrontCamera()) {
-                        parm.camera_id = 1;
-                    } else if (camid.isSubCamera()) {
-                        parm.camera_id = 2;
-                    }
-                }
-
-                sp<IAlgorithm> alg = getAlgorithm(ALG_HDR_CHECKER);
-                if (NOTNULL(alg)) {
-                    rc = alg->config(parm);
-                    if (!SUCCEED(rc)) {
-                        LOGE(mModule, "Failed to config %s, %d",
-                            alg->whoamI(), rc);
-                    }
-                }
-            }
-            RESETRESULT(rc);
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        if (mAlgStatus[ALG_RT_BOKEH].enable) {
-            AlgTraits<RTBokeh>::ParmType parm;
-            AFInfo info;
-            rc = mPal->getParm(info);
-            if (SUCCEED(rc)) {
-                if ((info.state == AFInfo::AF_STATE_FOCUSED_LOCKED) ||
-                    (info.state == AFInfo::AF_STATE_PASSIVE_FOCUSED)) {
-                    parm.afState = 1;
-                } else {
-                    parm.afState = 0;
-                }
-            }
-
-            SubCamData sub;
-            rc  = mPal->getParm(sub);
-            if (SUCCEED(rc)) {
-                if (sub.roiMapW > 0 && sub.roiMapH > 0) {
-                    parm.roiMapW = sub.roiMapW;
-                    parm.roiMapH = sub.roiMapH;
-                } else {
-                    parm.roiMapW = 0;
-                    parm.roiMapH = 0;
-                }
-            }
-
-            parm.previewFocusX = 0;
-            parm.previewFocusY = 0;
-            parm.calibSize = 0;
-
-            sp<IAlgorithm> alg = getAlgorithm(ALG_RT_BOKEH);
-            if (NOTNULL(alg)) {
-                rc = alg->config(parm);
-                if (!SUCCEED(rc)) {
-                    LOGE(mModule, "Failed to config %s, %d",
-                        alg->whoamI(), rc);
-                }
-            }
-            RESETRESULT(rc);
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        if (mAlgStatus[ALG_STILL_BOKEHA].enable) {
-            AlgTraits<StillBokehA>::ParmType parm;
-            AEInfo ae;
-            rc = mPal->getParm(ae);
-            if (SUCCEED(rc)) {
-                parm.parmType = AlgTraits<StillBokehA>::
-                    ParmType::STILL_BOKEH_A_PARM_TYPE_3A;
-                parm.iso = ae.iso_value;
-            }
-
-            FaceInfo faceInfo;
-            rc = mPal->getParm(faceInfo);
-            if (SUCCEED(rc) && faceInfo.size() > 0) {
-                PreviewDim preivewSize;
-                PictureDim pictureSize;
-                rc  = mPal->getParm(preivewSize);
-                rc |= mPal->getParm(pictureSize);
-                if (SUCCEED(rc)) {
-                    int32_t faceLeft = faceInfo.get(0).rect.left;
-                    int32_t faceTop = faceInfo.get(0).rect.top;
-                    int32_t faceW = faceInfo.get(0).rect.width;
-                    int32_t faceH = faceInfo.get(0).rect.height;
-                    int32_t picW = pictureSize.w;
-                    int32_t picH = pictureSize.h;
-                    int32_t prvW = preivewSize.w;
-                    int32_t prvH = preivewSize.h;
-                    parm.faceFocusX = (int32_t)(
-                        (faceLeft + faceW / 2) * ((float)picW / prvW));
-                    parm.faceFocusY = (int32_t)(
-                        (faceTop + faceH / 2) * ((float)picH / prvH));
-                } else {
-                    parm.faceFocusX = 0;
-                    parm.faceFocusY = 0;
-                }
-            }
-
-            if (SUCCEED(rc)) {
-                sp<IAlgorithm> alg = getAlgorithm(ALG_STILL_BOKEHA);
-                if (NOTNULL(alg)) {
-                    rc = alg->config(parm);
-                    if (!SUCCEED(rc)) {
-                        LOGE(mModule, "Failed to config %s, %d",
-                            alg->whoamI(), rc);
-                    }
-                }
-            }
-            RESETRESULT(rc);
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        if (mAlgStatus[ALG_DUAL_CAM_NIGHT_SHOT].enable) {
-            AlgTraits<DualCamNightShot>::ParmType parm;
-            AEInfo ae;
-            rc = mPal->getParm(ae);
-            if (SUCCEED(rc)) {
-                parm.parmType = AlgTraits<DualCamNightShot>::
-                    ParmType::DUAL_NIGHT_PARM_TYPE_3A;
-                parm.iso = ae.iso_value;
-                sp<IAlgorithm> alg = getAlgorithm(ALG_DUAL_CAM_NIGHT_SHOT);
-                if (NOTNULL(alg)) {
-                    rc = alg->config(parm);
-                    if (!SUCCEED(rc)) {
-                        LOGE(mModule, "Failed to config %s, %d",
-                            alg->whoamI(), rc);
-                    }
-                }
-            }
-            RESETRESULT(rc);
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        AEInfo ae;
-        rc = mPal->getParm(ae);
-        if (SUCCEED(rc)) {
-            sp<IAlgorithm> alg1 = getAlgorithm(ALG_BEAUTY_FACE);
-            sp<IAlgorithm> alg2 = getAlgorithm(ALG_BEAUTY_FACE_CAP);
-            if (NOTNULL(alg1) && NOTNULL(alg1)) {
-                AlgTraits<BeautyFace>::ParmType parm;
-                parm.camType.type = CameraTypeInf::CAMERA_TYPE_MAX_INVALID;
-                parm.rotation     = ROTATION_ANGLE_MAX_INVALID;
-                parm.manual       = -1;
-                parm.luxIndex     = ae.lux_index;
-                parm.backlight    = checkHdrOn();
-                parm.age          = -1;
-                parm.gender       = GENDER_TYPE_MAX_INVALID;
-                rc = alg1->config(parm);
-                if (!SUCCEED(rc)) {
-                    LOGE(mModule, "Failed to config %s, %d",
-                        alg1->whoamI(), rc);
-                }
-                rc = alg2->config(parm);
-                if (!SUCCEED(rc)) {
-                    LOGE(mModule, "Failed to config %s, %d",
-                        alg2->whoamI(), rc);
-                }
-            }
-        }
-        RESETRESULT(rc);
-    }
-
-    if (SUCCEED(rc)) {
-        if (mAlgStatus[ALG_SUPER_RESOLUTION].enable) {
-            AEInfo ae;
-            rc = mPal->getParm(ae);
-            if (SUCCEED(rc)) {
-                sp<IAlgorithm> alg = getAlgorithm(ALG_SUPER_RESOLUTION);
-                if (NOTNULL(alg)) {
-                    AlgTraits<SuperResolution>::ParmType parm;
-                    parm.zoomRatio = -1.0f;
-                    parm.iso       = ae.iso_value;
-                    parm.expTime   = ae.exp_time;
-                    rc = alg->config(parm);
-                    if (!SUCCEED(rc)) {
-                        LOGE(mModule, "Failed to config %s, %d",
-                            alg->whoamI(), rc);
-                    }
-                }
-            }
-            RESETRESULT(rc);
-        }
-    }
-
-    if (SUCCEED(rc)) {
-        if (mAlgStatus[ALG_PICTURE_ZOOM2].enable) {
-            AEInfo ae;
-            rc = mPal->getParm(ae);
-            if (SUCCEED(rc)) {
-                sp<IAlgorithm> alg = getAlgorithm(ALG_PICTURE_ZOOM2);
-                if (NOTNULL(alg)) {
-                    AlgTraits<PictureZoom2>::ParmType parm;
-                    parm.zoomRatio = -1.0f;
-                    parm.iso       = ae.iso_value;
-                    parm.expTime   = ae.exp_time;
-                    rc = alg->config(parm);
-                    if (!SUCCEED(rc)) {
-                        LOGE(mModule, "Failed to config %s, %d", alg->whoamI(), rc);
-                    }
-                }
-            }
-        }
-        RESETRESULT(rc);
-    }
-#endif
     return RETURNIGNORE(rc, NOT_INITED);
 }
 
@@ -1176,7 +850,7 @@ int32_t PandoraCore::updateParameter(
         RESETRESULT(rc);
     }
 
-
+#ifdef ENABLE_BEAUTY_FACE
     if (SUCCEED(rc)) {
         BeautySetting beauty;
         rc = mPal->getParm(beauty);
@@ -1184,7 +858,6 @@ int32_t PandoraCore::updateParameter(
             LOGD(mModule, "beauty setting not set or invalid");
         } else {
             switch(beauty.mode) {
-#if 0
             case BEAUTY_MODE_ON:
             case BEAUTY_MODE_MANUAL: {
                 mAlgStatus[ALG_BEAUTY_FACE].enable = true;
@@ -1239,7 +912,6 @@ int32_t PandoraCore::updateParameter(
                     NOTNULL(alg2) ? removeAlgorithm(ALG_MICRO_PLASTIC) : NO_ERROR;
                 }
             } break;
-#endif
             case BEAUTY_MODE_OFF: {
                 mAlgStatus[ALG_BEAUTY_FACE].enable  = false;
                 mAlgStatus[ALG_BEAUTY_FACE].enabled = false;
@@ -1258,7 +930,8 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-#if 0
+#endif
+#ifdef ENABLE_PICTURE_ZOOM
     if (SUCCEED(rc)) {
         PlatformPriv platformPriv;
         rc = mPal->getParm(platformPriv);
@@ -1283,7 +956,8 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-
+#endif
+#ifdef ENABLE_PICTURE_ZOOM2
     if (SUCCEED(rc)) {
         ZoomInf inf;
         rc = mPal->getParm(inf);
@@ -1307,7 +981,8 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-
+#endif
+#ifdef ENABLE_FAIR_LIGHT
     if (SUCCEED(rc)) {
         FairLightMode mode;
         rc = mPal->getParm(mode);
@@ -1334,7 +1009,8 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-
+#endif
+#ifdef ENABLE_MICRO_PLASTIC
     if (SUCCEED(rc)) {
         RotationAngle rotation;
         rc = mPal->getParm(rotation);
@@ -1351,7 +1027,8 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-
+#endif
+#ifdef ENABLE_HDR
     if (SUCCEED(rc)) {
         HdrMode mode;
         rc = mPal->getParm(mode);
@@ -1466,7 +1143,7 @@ int32_t PandoraCore::updateParameter(
                 mode == SMART_SHOT_MODE_ON;
         }
     }
-
+#ifdef ENABLE_VIDEO_STABILIZATION
     if (SUCCEED(rc)) {
         VideoStabMode mode;
         rc = mPal->getParm(mode);
@@ -1503,7 +1180,7 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-
+#endif
     if (SUCCEED(rc)) {
         FlipMode mode;
         rc = mPal->getParm(mode);
@@ -1576,7 +1253,7 @@ int32_t PandoraCore::updateParameter(
         if (!SUCCEED(rc)) {
             LOGD(mModule, "Sub camera data not set or invalid");
         } else {
-#if 0
+#ifdef ENABLE_RT_BOKEH
             if (mode.enableRTBokeh() &&
                 NOTNULL(sub.mainOTP) && sub.mainOTPSize) {
                 AlgTraits<RTBokeh>::ParmType preview_parm;
@@ -1607,7 +1284,8 @@ int32_t PandoraCore::updateParameter(
                     RESETRESULT(rc);
                 }
             }
-
+#endif
+#ifdef ENABLE_STILL_BOKEH
             if (mode.enableRefocus() &&
                 NOTNULL(sub.mainOTP) && sub.mainOTPSize) {
                 AlgTraits<StillBokehA>::ParmType picture_parm;
@@ -1643,7 +1321,8 @@ int32_t PandoraCore::updateParameter(
                     }
                 }
             }
-
+#endif
+#ifdef ENABLE_DUAL_NIGHT
             if (mode.enableNightshot() &&
                 NOTNULL(sub.mainOTP) && sub.mainOTPSize) {
                 AlgTraits<DualCamNightShot>::ParmType nightshot_parm;
@@ -1661,7 +1340,8 @@ int32_t PandoraCore::updateParameter(
                     }
                 }
             }
-
+#endif
+#ifdef ENABLE_STILL_BOKEH
             if (mode.enableStillBokeh()) {
                 AlgTraits<StillBokeh>::ParmType parm;
                 if (NOTNULL(sub.mainOTP) && sub.mainOTPSize) {
@@ -1718,7 +1398,7 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-#if 0
+#ifdef ENABLE_SUPER_RESOLUTION
     if (SUCCEED(rc)) {
         ZoomInf inf;
         rc = mPal->getParm(inf);
@@ -1743,7 +1423,8 @@ int32_t PandoraCore::updateParameter(
         }
         RESETRESULT(rc);
     }
-
+#endif
+#ifdef ENABLE_SINGLE_BOKEH
     if (SUCCEED(rc)) {
         SingleBokehInf bokeh;
         rc = mPal->getParm(bokeh);
