@@ -20,12 +20,14 @@ endif
 	autoreconf -fiv; \
 	./configure; \
 	make; \
+	mv .libs libs; \
 	cp -ar $(CURRDIR)/libjpeg-turbo/libs/$(FILENAME) $(CURRDIR)/
 endef
 
 clean:
 	cd libjpeg-turbo; \
 	make  clean; \
-	rm -rf $(CURRDIR)/$(TARGET)
+	rm -rf $(CURRDIR)/$(TARGET); \
+	rm -rf libs
 
 .PHONY: clean
