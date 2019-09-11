@@ -22,7 +22,7 @@ int user_interface(Parameters *param)
     int algoSwitch = 0;
 re_start:
     cout << "select algo:" << endl;
-    cout << ALG_BEAUTY_FACE <<".\tbeauty_face" <<endl;
+    cout << ALG_BEAUTY_FACE <<".\tbeauty face" <<endl;
     cout << ALG_WATER_MARK <<".\twater mark" << endl;
     cout << ALG_NIGHT_SHOT <<".\tnight shot" << endl;
     cout << ALG_MAX_INVALID << ".\tquit" << endl;

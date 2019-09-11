@@ -21,7 +21,7 @@ using namespace pandora;
 
 int main(int argc, char *argv[])
 {
-    LOGE(MODULE_OTHERS, "start.....");
+    LOGI(MODULE_OTHERS, "start.....");
 
     int rc = NO_ERROR;
     void *data;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         mPandora->onFrameReady(frame);
         mPandora->pictureTaken();
     }
-    LOGE(MODULE_OTHERS, "success");
+    LOGI(MODULE_OTHERS, "exit");
 
     return rc;
 }

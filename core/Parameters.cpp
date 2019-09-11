@@ -47,7 +47,7 @@ const char* Parameters::get(const char *key) const
 int Parameters::getInt(const char *key) const
 {
     const char *v = get(key);
-    if (v == 0) {
+    if (v == NULL) {
         return -1;
     }
     return strtol(v, 0, 0);
@@ -56,7 +56,7 @@ int Parameters::getInt(const char *key) const
 float Parameters::getFloat(const char *key) const
 {
     const char *v = get(key);
-    if (v == 0) {
+    if (v == NULL) {
         return -1;
     }
     return strtof(v, 0);

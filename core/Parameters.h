@@ -7,28 +7,6 @@ using namespace std;
 
 namespace pandora {
 
-struct Size {
-    int width;
-    int height;
-
-    Size() {
-        width = 0;
-        height = 0;
-    }
-
-    Size(int w, int h) {
-        width = w;
-        height = h;
-    }
-};
-
-enum {
-    MODE_OFF,
-    MODE_ON,
-    MODE_MANUAL,
-    MODE_INVALID,
-};
-
 class Parameters
 {
 public:
