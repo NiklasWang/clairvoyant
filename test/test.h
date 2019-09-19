@@ -7,8 +7,14 @@
 using namespace pandora;
 
 
-int user_interface(Parameters *param);
-int transfer(void **data, FrameInfo &frame);
+class Test {
+public:
+    Test();
+    ~Test();
+    int Init();
+    int transfer(void **data, FrameInfo &frame);
+    int user_interface(Parameters *param);
+};
 
 
 #endif

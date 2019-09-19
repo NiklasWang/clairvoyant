@@ -2,6 +2,7 @@ CXX      = $(GLOBAL_CXX)
 AR       = $(GLOBAL_AR)
 CXXFLAGS = $(GLOBAL_CXXFLAGS)
 LDFLAGS  = $(GLOBAL_LDFLAGS) -pthread
+FFMPEGDIR = $(ROOT_DIR)/external/FFmpeg
 
 include $(MAKE_RULE)/project.info.make.rule
 
@@ -21,10 +22,15 @@ include $(MAKE_RULE)/find.library.make.rule
 
 include $(MAKE_RULE)/dependency.make.rule
 
-LDFLAGS += -L $(ROOT_DIR)/external/freetype/freetype-2.6/objs/libs -L $(ROOT_DIR)/external/libjpeg-turbo/libjpeg-turbo/libs -L /usr/lib/x86_64-linux-gnu -I/usr/include/harfbuzz  -I/usr/include/libpng  -Wl,-Bstatic  -lfreetype -lturbojpeg -lpng -lexif -lutils -lutil -Wl,-Bdynamic -llog -lharfbuzz -lz
+LDFLAGS += -L $(ROOT_DIR)/external/freetype/freetype-2.6/objs/libs -L $(ROOT_DIR)/external/libjpeg-turbo/libjpeg-turbo/libs -L $(ROOT_DIR)/external/zlib/zlib -I/usr/include/harfbuzz  -I/usr/include/libpng  -Wl,-Bstatic  -lfreetype -lturbojpeg -lpng -lexif -lutils -lutil -Wl,-Bdynamic -llog -lharfbuzz -lz
 
 CXXFLAGS += -I$(ROOT_DIR)/test/
 LDFLAGS += -L $(ROOT_DIR)/test/
+
+CXXFLAGS   +=  -I$(ROOT_DIR) -I$(ROOT_DIR)/core -I$(ROOT_DIR)/utils -I$(ROOT_DIR)/pal/platform_ubuntu
+CXXFLAGS   +=  -I$(FFMPEGDIR)/FFmpeg/libavcodec/ -I$(FFMPEGDIR)/FFmpeg/libavformat -I$(FFMPEGDIR)/FFmpeg/libswscale
+LDFLAGS    +=  -L $(ROOT_DIR)/external/zlib -L $(FFMPEGDIR)/lib  -L /usr/lib/x86_64-linux-gnu
+LDFLAGS    +=  -Bstatic -lavformat -lavcodec -lavutil -lswscale -lswresample -lz -llzma
 
 all: compile link
 

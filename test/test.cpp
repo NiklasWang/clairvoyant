@@ -15,7 +15,12 @@ using namespace pandora;
 
 #define SIZE (20*1024*1024)
 
-int user_interface(Parameters *param)
+Test::Test()
+{}
+Test::~Test()
+{}
+
+int Test::user_interface(Parameters *param)
 {
     int rc = 0;
     int algo = 0;
@@ -52,7 +57,7 @@ re_start:
     return rc;
 }
 
-int transfer(void **data, FrameInfo &frame)
+int Test::transfer(void **data, FrameInfo &frame)
 {
     int rc = 0;
     Parameters *param = new Parameters();
@@ -60,7 +65,7 @@ int transfer(void **data, FrameInfo &frame)
     if (rc != 0) {
         return -1;
     }
-    
+
     char *fileName = "../test/1_water_mark_input_1566972572_dump_4096x3072.nv21";
     int fd = open(fileName, O_RDWR);
     if (fd < 0) {
