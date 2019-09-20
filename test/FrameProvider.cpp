@@ -1,29 +1,45 @@
 #include <stdint.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <iostream>
+#include <thread>
+#include <condition_variable>
 
 #include "FrameProvider.h"
 #include "AlgorithmType.h"
 #include "PlatformParameters.h"
 #include "PandoraSingleton.h"
 
+#define SCREEN_W 800
+#define SCREEN_H 600
+#define REFRESH_EVENT  (SDL_USEREVENT + 1)
+#define BREAK_EVENT  (SDL_USEREVENT + 2)
+#define MEDIA_PATH "../test/test.mp4"
 
 using namespace std;
 using namespace pandora;
 
-AVCodecContext *pCodecCtx;
-AVFormatContext *pFormatCtx;
-int videoStream;
+extern FrameInfo gFrame;
 
-extern mutex mtx;
-extern condition_variable cv;
-extern int ready;
-extern FrameInfo frame;
 
-FrameProvider::FrameProvider()
+int thread_exit = 0;
+int preview_pause = 0;
+int start_capture = 0;
+int g_process_finished = 0;
+extern std::mutex mtx;
+extern std::condition_variable cv;
+
+FrameProvider::FrameProvider():
+    pCodecCtx(NULL),
+    pFormatCtx(NULL),
+    mFrame(NULL),
+    mFrameYUV(NULL),
+    mPacket(NULL),
+    mWin(NULL),
+    mRender(NULL),
+    mTexture(NULL),
+    videoStream(-1),
+    out_buffer(NULL),
+    img_convert_ctx(NULL)
 {
 }
 FrameProvider::~FrameProvider()
@@ -33,7 +49,9 @@ FrameProvider::~FrameProvider()
 int FrameProvider::Init()
 {
     AVCodec *pCodec;
-    const char *filename = "../test/test.mp4";
+    const char *filename = MEDIA_PATH;
+    int pixel_w = 0;
+    int pixel_h = 0;
 
     av_register_all();
 
@@ -77,59 +95,157 @@ int FrameProvider::Init()
         printf ("avcode open failed!\n");
         exit (1);
     }
+    mFrame = av_frame_alloc();
+    mFrameYUV = av_frame_alloc();
+
+    out_buffer = (unsigned char *)av_malloc(av_image_get_buffer_size(AV_PIX_FMT_YUV420P,  pCodecCtx->width, pCodecCtx->height,1));
+    av_image_fill_arrays(mFrameYUV->data, mFrameYUV->linesize,out_buffer,AV_PIX_FMT_YUV420P,pCodecCtx->width, pCodecCtx->height,1);
+#if 0
+    //Output Info-----------------------------
+    printf("---------------- File Information ---------------\n");
+    av_dump_format(pFormatCtx,0,filename,0);
+    printf("-------------------------------------------------\n");
+#endif
+    img_convert_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt,
+        pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL);
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
+        printf( "Could not initialize SDL - %s\n", SDL_GetError());
+        return -1;
+    }
+
+    pixel_w = pCodecCtx->width;
+    pixel_h = pCodecCtx->height;
+    mWin = SDL_CreateWindow("SDL terminal 空格-->stop 回车-->capture", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_W, SCREEN_H, SDL_WINDOW_SHOWN);
+    if(!mWin) {
+        printf("SDL: could not SDL_CreateWindow - exiting:%s\n",SDL_GetError());
+        return -1;
+    }
+
+    mRender = SDL_CreateRenderer(mWin, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
+    if(!mRender) {
+        printf("SDL: could not SDL_CreateRenderer - exiting:%s\n",SDL_GetError());
+        return -1;
+    }
+
+    mTexture = SDL_CreateTexture(mRender, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STREAMING, pixel_w, pixel_h);
 
     return 0;
 }
 
-void FrameProvider::startProviderThread()
+
+int FrameProvider::preview_refresh_thread(void *opaque)
 {
-    cout << "start thread ******test******" << endl << endl;
-
-    AVFrame *pFrame;
-    AVPacket *packet;
-    int frameFinished = 0;
-    int channels = 3;
-    pFrame = av_frame_alloc();
-    packet=(AVPacket *)av_malloc(sizeof(AVPacket));
-    unique_lock<std::mutex> lock(mtx);
-    void *data = malloc(pCodecCtx->coded_width * pCodecCtx->coded_height * sizeof(uint8_t) * channels);
-    cout << pCodecCtx->coded_width << " " << pCodecCtx->coded_height << endl;
-    while (av_read_frame(pFormatCtx, packet) >= 0) {
-        while (ready != PROVIDER_THREAD_RUN) {
-            cv.wait(lock);
+    thread_exit = 0;
+    preview_pause = 0;
+    while (!thread_exit) {
+        if (!preview_pause) {
+            SDL_Event event;
+            event.type = REFRESH_EVENT;
+            SDL_PushEvent(&event);
         }
-
-        if (packet->stream_index == videoStream) {
-            avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet);
-            if (frameFinished) {
-                process(pFrame, data);
-                ready = MAIN_THREAD_RUN;
-                cv.notify_all();
-            }
-        }
-        av_free_packet(packet);
+        SDL_Delay(40);
     }
-    av_free(pFrame);
-    free(data);
+    cv.notify_all();
+    printf("preview thread exit ...\n");
+    return 0;
+}
+
+int FrameProvider::start()
+{
+    SDL_Thread *preview_tid = NULL;
+    int ret, got_frame;
+    int pixel_w = 0;
+    int pixel_h = 0;
+    int type = FRAME_TYPE_PREVIEW;
+    mPacket = (AVPacket *)av_malloc(sizeof(AVPacket));
+    preview_tid = SDL_CreateThread(preview_refresh_thread, NULL, NULL);
+    if (preview_tid == NULL) {
+        printf("avcode open failed!\n");
+        return -1;
+    }
+    while (1) {
+        SDL_WaitEvent(&event);
+
+        if (event.type == REFRESH_EVENT || event.type == SDL_KEYDOWN) {
+            if (av_read_frame(pFormatCtx, mPacket) >= 0) {
+                if (mPacket->stream_index == videoStream) {
+                    ret = avcodec_decode_video2(pCodecCtx, mFrame, &got_frame, mPacket);
+                    if (ret < 0) {
+                        printf("Decode Error.\n");
+                        return -1;
+                    }
+                    if (got_frame) {
+                        type = FRAME_TYPE_PREVIEW;
+                        if (event.type == SDL_KEYDOWN) {
+                            switch (event.key.keysym.sym) {
+                                case SDLK_SPACE: {
+                                    preview_pause = !preview_pause;
+                                    break;
+                                }
+                                case SDLK_RETURN: { //capture
+                                    type = FRAME_TYPE_SNAPSHOT;
+                                    start_capture = 1;
+                                    break;
+                                }
+                                default: {
+                                    break;
+                                }
+                            }
+                        }
+                        void *data = malloc(mFrame->width * mFrame->height * sizeof(uint8_t) * 3);
+                        process(mFrame, data, type);
+                        free(data);
+                        sws_scale(img_convert_ctx, (const unsigned char* const*)mFrame->data, mFrame->linesize, 0, pCodecCtx->height, mFrameYUV->data, mFrameYUV->linesize);
+                        SDL_UpdateTexture(mTexture, NULL, mFrameYUV->data[0], mFrameYUV->linesize[0] );
+                        SDL_RenderClear(mRender);
+                        SDL_RenderCopy(mRender, mTexture, NULL, NULL);
+                        SDL_RenderPresent(mRender);
+                    }
+                }
+                av_free_packet(mPacket);
+            } else {
+                thread_exit = 1;
+                break;
+            }
+        }else if (event.type == SDL_WINDOWEVENT) {
+			SDL_GetWindowSize(mWin, &pixel_w, &pixel_h);
+        } else if (event.type == SDL_QUIT) {
+            thread_exit = 1;
+            break;
+        } else if (event.type == BREAK_EVENT) {
+            break;
+        }
+    }
+    sws_freeContext(img_convert_ctx);
+    SDL_Quit();
+    av_free(out_buffer);
+    av_free(mFrame);
+    av_free(mFrameYUV);
+    av_free(mPacket);
     avcodec_close(pCodecCtx);
     avformat_close_input(&pFormatCtx);
-    cout << "exit thread ******test******" << endl << endl;
+    return 0;
 }
 
-int FrameProvider::process(AVFrame* pFrame, void *data)
+int FrameProvider::process(AVFrame* pFrame, void *data, int type)
 {
     AVFrame2NV21(data, pFrame);
-    frame.frame = data;
-    frame.w = pFrame->width;
-    frame.h = pFrame->height;
-    frame.stride = 64;
-    frame.scanline = 64;
-    frame.type = FRAME_TYPE_SNAPSHOT;
-    frame.format = FRAME_FORMAT_YUV_420_NV21;
+    gFrame.frame = data;
+    gFrame.w = pFrame->width;
+    gFrame.h = pFrame->height;
+    gFrame.stride = 64;
+    gFrame.scanline = 64;
+    gFrame.type = (pandora::FrameType)type;
+    gFrame.format = FRAME_FORMAT_YUV_420_NV21;
+    cv.notify_all(); //唤醒主线程处理图像数据
+    while (!g_process_finished) ; //循环直到线程处理完成
+
+    g_process_finished = 0;
+    NV21toAVFrame(data, pFrame);
 
     return 0;
 }
- 
+
 int FrameProvider::AVFrame2yuv420(void *data, AVFrame* frame)
 {
     int i, j, k;
@@ -153,9 +269,7 @@ int FrameProvider::AVFrame2yuv420(void *data, AVFrame* frame)
 
 int FrameProvider::AVFrame2NV21(void *data, AVFrame* frame)
 {
-    cout << frame->linesize[0] << " " << frame->linesize[1] << " " << frame->linesize[2] << endl;
     int i, j, k;
-    uint8_t *buf2 = (uint8_t *)data;
 
     for (i = 0; i < frame->height; i++) {
         memcpy(data + frame->width * i,
@@ -170,4 +284,23 @@ int FrameProvider::AVFrame2NV21(void *data, AVFrame* frame)
     }
     return 0;
 }
+
+int FrameProvider::NV21toAVFrame(void *data, AVFrame* frame)
+{
+    int i, j, k;
+
+    for (i = 0; i < frame->height; i++) {
+        memcpy(frame->data[0] + frame->linesize[0] * i,
+            data + frame->width * i,
+            frame->width);
+    }
+
+    uint8_t *buf = (uint8_t *)(data + frame->width * i);
+    for (j = 0, k = 0; j < frame->height * frame->width / 2; j+=2, k++) {
+        *(frame->data[2] + k) = *(buf + j);
+        *(frame->data[1] + k) = *(buf + j + 1);
+    }
+    return 0;
+}
+
 

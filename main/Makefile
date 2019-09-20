@@ -2,7 +2,7 @@ CXX      = $(GLOBAL_CXX)
 AR       = $(GLOBAL_AR)
 CXXFLAGS = $(GLOBAL_CXXFLAGS)
 LDFLAGS  = $(GLOBAL_LDFLAGS) -pthread
-FFMPEGDIR = $(ROOT_DIR)/external/FFmpeg
+FFMPEGDIR = $(ROOT_DIR)/external/FFmpeg/FFmpeg
 
 include $(MAKE_RULE)/project.info.make.rule
 
@@ -28,9 +28,9 @@ CXXFLAGS += -I$(ROOT_DIR)/test/
 LDFLAGS += -L $(ROOT_DIR)/test/
 
 CXXFLAGS   +=  -I$(ROOT_DIR) -I$(ROOT_DIR)/core -I$(ROOT_DIR)/utils -I$(ROOT_DIR)/pal/platform_ubuntu
-CXXFLAGS   +=  -I$(FFMPEGDIR)/FFmpeg/libavcodec/ -I$(FFMPEGDIR)/FFmpeg/libavformat -I$(FFMPEGDIR)/FFmpeg/libswscale
-LDFLAGS    +=  -L $(ROOT_DIR)/external/zlib -L $(FFMPEGDIR)/lib  -L /usr/lib/x86_64-linux-gnu
-LDFLAGS    +=  -Bstatic -lavformat -lavcodec -lavutil -lswscale -lswresample -lz -llzma
+CXXFLAGS   +=  -I$(FFMPEGDIR)/libavcodec/ -I$(FFMPEGDIR)/libavformat -I$(FFMPEGDIR)/libswscale -I$(FFMPEGDIR)/libavdevice -I$(FFMPEGDIR)/libavutil -I$(ROOT_DIR)/external/SDL/SDL2/include
+LDFLAGS    +=  -L $(ROOT_DIR)/external/zlib -L $(FFMPEGDIR)/../lib  -L /usr/lib/x86_64-linux-gnu
+LDFLAGS    +=  -Bstatic -lavformat -lavcodec -lavutil -lswscale -lswresample -lz -llzma -lavdevice -lavfilter -lSDL2 -lxcb-shm -lxcb -lxcb-xfixes -lxcb-shape -ldl -lasound
 
 all: compile link
 

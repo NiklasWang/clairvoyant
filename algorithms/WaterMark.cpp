@@ -281,8 +281,6 @@ int32_t WaterMark::process(TaskTypeT &task, ResultTypeT &result)
             LOGI(mModule, "Water mark added to snapshot.");
         }
     }
-    dumpNV21ToJpeg(task.data, "water_mark_output",
-            task.w, task.h, task.stride, task.scanline);
 
     if (SUCCEED(rc)) {
         result.valid = true;

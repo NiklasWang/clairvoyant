@@ -1,7 +1,4 @@
 #include <stdint.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
@@ -19,32 +16,44 @@
 #include "AlgorithmType.h"
 #include "test.h"
 #include "FrameProvider.h"
+#include "AlgorithmHelper.h"
 
 using namespace pandora;
 using namespace std;
 
+extern int thread_exit;
+extern int preview_pause;
+extern int start_capture;
+extern int g_process_finished;
 std::mutex mtx;
 std::condition_variable cv;
-int ready = 0; //control thread
 
-FrameInfo frame; //use to thread communication
+
+FrameInfo gFrame; //use to thread communication
 
 void startMainThread(void *arg, void *param)
 {
-    cout << "start thread ******main******" << endl << endl;
+    cout << "MainThread run..." << endl << endl;
     PandoraSingleton *pandora = (PandoraSingleton *)arg;
     pandora->onParameterAvailable(param);
-
+    pandora->startPreview();
+    thread_exit = 0;
+    preview_pause = 0;
     unique_lock<std::mutex> lock(mtx);
-    while (1) {
-        while (ready != MAIN_THREAD_RUN) {
-            cv.wait(lock);
+
+	while (!thread_exit) {
+        cv.wait(lock);
+        if (start_capture) {
+            pandora->takePicture();
+            start_capture = 0;
         }
-        pandora->takePicture();
-        pandora->onFrameReady(frame);
-        ready = PROVIDER_THREAD_RUN;
-        cv.notify_all();
-    }
+        pandora->onFrameReady(gFrame);
+        if (gFrame.type == FRAME_TYPE_SNAPSHOT) {
+            dumpNV21ToJpeg(gFrame.frame, "output", gFrame.w, gFrame.h, gFrame.stride, gFrame.scanline);
+        }
+        g_process_finished = 1;
+	}
+    cout << "MainThread exit..." << endl << endl;
 }
 
 int main(int argc, char *argv[])
@@ -67,13 +76,11 @@ int main(int argc, char *argv[])
         return -1;
     }
     FrameProvider *provider = new FrameProvider();
-    provider->Init();
-    ready = PROVIDER_THREAD_RUN;
-
     std::thread  t1(startMainThread, mPandora, param);
-    std::thread  t2(&provider->startProviderThread);
+
+    provider->Init();
+    provider->start();
     t1.join();
-    t2.join();
 
     return rc;
 }
