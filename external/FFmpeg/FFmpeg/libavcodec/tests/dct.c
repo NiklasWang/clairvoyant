@@ -38,7 +38,7 @@
 #include "libavutil/common.h"
 #include "libavutil/internal.h"
 #include "libavutil/lfg.h"
-#include "libavutil/time.h"
+#include "libavutil/times.h"
 
 #include "libavcodec/dct.h"
 #include "libavcodec/idctdsp.h"

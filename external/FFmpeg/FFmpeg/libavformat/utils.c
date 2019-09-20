@@ -33,7 +33,7 @@
 #include "libavutil/parseutils.h"
 #include "libavutil/pixdesc.h"
 #include "libavutil/thread.h"
-#include "libavutil/time.h"
+#include "libavutil/times.h"
 #include "libavutil/time_internal.h"
 #include "libavutil/timestamp.h"
 

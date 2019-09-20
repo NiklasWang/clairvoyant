@@ -30,7 +30,7 @@
 #include "libavutil/internal.h"
 #include "libavutil/mathematics.h"
 #include "libavutil/opt.h"
-#include "libavutil/time.h"
+#include "libavutil/times.h"
 #include "audio.h"
 #include "avfilter.h"
 #include "internal.h"

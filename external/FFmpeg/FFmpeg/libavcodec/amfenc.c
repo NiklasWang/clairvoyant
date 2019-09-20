@@ -30,7 +30,7 @@
 #endif
 #include "libavutil/mem.h"
 #include "libavutil/pixdesc.h"
-#include "libavutil/time.h"
+#include "libavutil/times.h"
 
 #include "amfenc.h"
 #include "internal.h"

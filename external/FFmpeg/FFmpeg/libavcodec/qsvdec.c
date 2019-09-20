@@ -33,7 +33,7 @@
 #include "libavutil/log.h"
 #include "libavutil/pixdesc.h"
 #include "libavutil/pixfmt.h"
-#include "libavutil/time.h"
+#include "libavutil/times.h"
 
 #include "avcodec.h"
 #include "internal.h"

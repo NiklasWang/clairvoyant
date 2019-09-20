@@ -28,7 +28,7 @@
 #include "libavutil/avassert.h"
 #include "libavutil/avstring.h"
 #include "libavutil/opt.h"
-#include "libavutil/time.h"
+#include "libavutil/times.h"
 #include "libavutil/parseutils.h"
 
 #include "avformat.h"

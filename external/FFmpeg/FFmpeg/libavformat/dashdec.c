@@ -22,7 +22,7 @@
 #include <libxml/parser.h>
 #include "libavutil/intreadwrite.h"
 #include "libavutil/opt.h"
-#include "libavutil/time.h"
+#include "libavutil/times.h"
 #include "libavutil/parseutils.h"
 #include "internal.h"
 #include "avio_internal.h"
