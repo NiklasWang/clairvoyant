@@ -1505,6 +1505,7 @@ int32_t PandoraCore::processPreviewAlgs(TaskType &task)
                 ALG_HDR_CHECKER, _task, ASYNC_TYPE);
         }
     }
+    drawWaterMark(task);
 #if 0
     if (mAlgStatus[ALG_AGE_GENDER_DETECTION].enabled) {
         sp<IAlgorithm> alg = getAlgorithm(ALG_AGE_GENDER_DETECTION);

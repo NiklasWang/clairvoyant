@@ -20,17 +20,17 @@ enum {
     PROVIDER_THREAD_RUN,
 };
 
-class FrameProvider {
+class FrameGenerator {
 public:
-    FrameProvider();
-    ~FrameProvider();
+    FrameGenerator();
+    ~FrameGenerator();
     int Init();
     int start();
     static int preview_refresh_thread(void *opaque);
     static int process(AVFrame* pFrame, void *data, int type);
-    static int AVFrame2yuv420(void *data, AVFrame* frame);
-    static int AVFrame2NV21(void *data, AVFrame* frame);
-    static int NV21toAVFrame(void *data, AVFrame* frame);
+    static int AVyuv420Toyuv420(void *data, AVFrame* frame);
+    static int AVNV21ToNV21(void *data, AVFrame* frame);
+    static int NV21ToAVNV21(void *data, AVFrame* frame);
 private:
     AVCodecContext  *pCodecCtx;
     AVFormatContext *pFormatCtx;

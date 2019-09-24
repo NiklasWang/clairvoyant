@@ -4,7 +4,7 @@
 #include <thread>
 #include <condition_variable>
 
-#include "FrameProvider.h"
+#include "FrameGenerator.h"
 #include "AlgorithmType.h"
 #include "PlatformParameters.h"
 #include "PandoraSingleton.h"
@@ -28,7 +28,7 @@ int g_process_finished = 0;
 extern std::mutex mtx;
 extern std::condition_variable cv;
 
-FrameProvider::FrameProvider():
+FrameGenerator::FrameGenerator():
     pCodecCtx(NULL),
     pFormatCtx(NULL),
     mFrame(NULL),
@@ -42,11 +42,11 @@ FrameProvider::FrameProvider():
     img_convert_ctx(NULL)
 {
 }
-FrameProvider::~FrameProvider()
+FrameGenerator::~FrameGenerator()
 {
 }
 
-int FrameProvider::Init()
+int FrameGenerator::Init()
 {
     AVCodec *pCodec;
     const char *filename = MEDIA_PATH;
@@ -98,8 +98,8 @@ int FrameProvider::Init()
     mFrame = av_frame_alloc();
     mFrameYUV = av_frame_alloc();
 
-    out_buffer = (unsigned char *)av_malloc(av_image_get_buffer_size(AV_PIX_FMT_YUV420P,  pCodecCtx->width, pCodecCtx->height,1));
-    av_image_fill_arrays(mFrameYUV->data, mFrameYUV->linesize,out_buffer,AV_PIX_FMT_YUV420P,pCodecCtx->width, pCodecCtx->height,1);
+    out_buffer = (unsigned char *)av_malloc(av_image_get_buffer_size(AV_PIX_FMT_NV21,  pCodecCtx->width, pCodecCtx->height, 1));
+    av_image_fill_arrays(mFrameYUV->data, mFrameYUV->linesize, out_buffer, AV_PIX_FMT_NV21, pCodecCtx->width, pCodecCtx->height, 1);
 #if 0
     //Output Info-----------------------------
     printf("---------------- File Information ---------------\n");
@@ -107,7 +107,8 @@ int FrameProvider::Init()
     printf("-------------------------------------------------\n");
 #endif
     img_convert_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt,
-        pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL);
+        pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_NV21, SWS_BICUBIC, NULL, NULL, NULL);
+
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
         printf( "Could not initialize SDL - %s\n", SDL_GetError());
         return -1;
@@ -116,6 +117,7 @@ int FrameProvider::Init()
     pixel_w = pCodecCtx->width;
     pixel_h = pCodecCtx->height;
     mWin = SDL_CreateWindow("SDL terminal 空格-->stop 回车-->capture", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_W, SCREEN_H, SDL_WINDOW_SHOWN);
+
     if(!mWin) {
         printf("SDL: could not SDL_CreateWindow - exiting:%s\n",SDL_GetError());
         return -1;
@@ -133,7 +135,7 @@ int FrameProvider::Init()
 }
 
 
-int FrameProvider::preview_refresh_thread(void *opaque)
+int FrameGenerator::preview_refresh_thread(void *opaque)
 {
     thread_exit = 0;
     preview_pause = 0;
@@ -150,7 +152,7 @@ int FrameProvider::preview_refresh_thread(void *opaque)
     return 0;
 }
 
-int FrameProvider::start()
+int FrameGenerator::start()
 {
     SDL_Thread *preview_tid = NULL;
     int ret, got_frame;
@@ -165,7 +167,6 @@ int FrameProvider::start()
     }
     while (1) {
         SDL_WaitEvent(&event);
-
         if (event.type == REFRESH_EVENT || event.type == SDL_KEYDOWN) {
             if (av_read_frame(pFormatCtx, mPacket) >= 0) {
                 if (mPacket->stream_index == videoStream) {
@@ -192,11 +193,13 @@ int FrameProvider::start()
                                 }
                             }
                         }
-                        void *data = malloc(mFrame->width * mFrame->height * sizeof(uint8_t) * 3);
-                        process(mFrame, data, type);
-                        free(data);
                         sws_scale(img_convert_ctx, (const unsigned char* const*)mFrame->data, mFrame->linesize, 0, pCodecCtx->height, mFrameYUV->data, mFrameYUV->linesize);
-                        SDL_UpdateTexture(mTexture, NULL, mFrameYUV->data[0], mFrameYUV->linesize[0] );
+                        mFrameYUV->width = mFrame->width;
+                        mFrameYUV->height = mFrame->height;
+                        void *data = malloc(mFrameYUV->width * mFrameYUV->height * sizeof(uint8_t) * 3);
+                        process(mFrameYUV, data, type);
+                        free(data);
+                        SDL_UpdateTexture(mTexture, NULL, mFrameYUV->data[0], mFrameYUV->linesize[0]);
                         SDL_RenderClear(mRender);
                         SDL_RenderCopy(mRender, mTexture, NULL, NULL);
                         SDL_RenderPresent(mRender);
@@ -227,9 +230,9 @@ int FrameProvider::start()
     return 0;
 }
 
-int FrameProvider::process(AVFrame* pFrame, void *data, int type)
+int FrameGenerator::process(AVFrame* pFrame, void *data, int type)
 {
-    AVFrame2NV21(data, pFrame);
+    AVNV21ToNV21(data, pFrame);
     gFrame.frame = data;
     gFrame.w = pFrame->width;
     gFrame.h = pFrame->height;
@@ -239,14 +242,13 @@ int FrameProvider::process(AVFrame* pFrame, void *data, int type)
     gFrame.format = FRAME_FORMAT_YUV_420_NV21;
     cv.notify_all(); //唤醒主线程处理图像数据
     while (!g_process_finished) ; //循环直到线程处理完成
-
+    NV21ToAVNV21(data, pFrame);
     g_process_finished = 0;
-    NV21toAVFrame(data, pFrame);
 
     return 0;
 }
 
-int FrameProvider::AVFrame2yuv420(void *data, AVFrame* frame)
+int FrameGenerator::AVyuv420Toyuv420(void *data, AVFrame* frame)
 {
     int i, j, k;
     for (i = 0; i < frame->height; i++) {
@@ -267,9 +269,9 @@ int FrameProvider::AVFrame2yuv420(void *data, AVFrame* frame)
     return 0;
 }
 
-int FrameProvider::AVFrame2NV21(void *data, AVFrame* frame)
+int FrameGenerator::AVNV21ToNV21(void *data, AVFrame* frame)
 {
-    int i, j, k;
+    int i, j;
 
     for (i = 0; i < frame->height; i++) {
         memcpy(data + frame->width * i,
@@ -277,17 +279,18 @@ int FrameProvider::AVFrame2NV21(void *data, AVFrame* frame)
             frame->width);
     }
 
-    uint8_t *buf = (uint8_t *)(data + frame->width * i);
-    for (j = 0, k = 0; j < frame->height * frame->width / 2; j+=2, k++) {
-        *(buf + j) = *(frame->data[2] + k);
-        *(buf + j + 1) = *(frame->data[1] + k);
-    }
+    for (j = 0; j < frame->height / 2; j++) {
+            memcpy(data + frame->width * i + frame->width * j,
+                frame->data[1] + frame->linesize[1] * j,
+                frame->width);
+        }
+
     return 0;
 }
 
-int FrameProvider::NV21toAVFrame(void *data, AVFrame* frame)
+int FrameGenerator::NV21ToAVNV21(void *data, AVFrame* frame)
 {
-    int i, j, k;
+    int i, j;
 
     for (i = 0; i < frame->height; i++) {
         memcpy(frame->data[0] + frame->linesize[0] * i,
@@ -295,10 +298,10 @@ int FrameProvider::NV21toAVFrame(void *data, AVFrame* frame)
             frame->width);
     }
 
-    uint8_t *buf = (uint8_t *)(data + frame->width * i);
-    for (j = 0, k = 0; j < frame->height * frame->width / 2; j+=2, k++) {
-        *(frame->data[2] + k) = *(buf + j);
-        *(frame->data[1] + k) = *(buf + j + 1);
+    for (j = 0; j < frame->height / 2; j++) {
+        memcpy(frame->data[1] + frame->linesize[1] * j,
+            data + frame->width * i + frame->width * j,
+            frame->width);
     }
     return 0;
 }

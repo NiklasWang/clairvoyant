@@ -15,7 +15,7 @@
 #include "PlatformParameters.h"
 #include "AlgorithmType.h"
 #include "test.h"
-#include "FrameProvider.h"
+#include "FrameGenerator.h"
 #include "AlgorithmHelper.h"
 
 using namespace pandora;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     if (rc != 0) {
         return -1;
     }
-    FrameProvider *provider = new FrameProvider();
+    FrameGenerator *provider = new FrameGenerator();
     std::thread  t1(startMainThread, mPandora, param);
 
     provider->Init();
