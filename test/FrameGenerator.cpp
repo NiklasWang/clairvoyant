@@ -109,7 +109,7 @@ int FrameGenerator::Init()
     img_convert_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt,
         pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_NV21, SWS_BICUBIC, NULL, NULL, NULL);
 
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
         printf( "Could not initialize SDL - %s\n", SDL_GetError());
         return -1;
     }
@@ -118,13 +118,13 @@ int FrameGenerator::Init()
     pixel_h = pCodecCtx->height;
     mWin = SDL_CreateWindow("SDL terminal 空格-->stop 回车-->capture", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_W, SCREEN_H, SDL_WINDOW_SHOWN);
 
-    if(!mWin) {
+    if (!mWin) {
         printf("SDL: could not SDL_CreateWindow - exiting:%s\n",SDL_GetError());
         return -1;
     }
 
     mRender = SDL_CreateRenderer(mWin, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
-    if(!mRender) {
+    if (!mRender) {
         printf("SDL: could not SDL_CreateRenderer - exiting:%s\n",SDL_GetError());
         return -1;
     }
@@ -145,7 +145,7 @@ int FrameGenerator::preview_refresh_thread(void *opaque)
             event.type = REFRESH_EVENT;
             SDL_PushEvent(&event);
         }
-        SDL_Delay(40);
+        SDL_Delay(10);
     }
     cv.notify_all();
     printf("preview thread exit ...\n");
@@ -241,7 +241,7 @@ int FrameGenerator::process(AVFrame* pFrame, void *data, int type)
     gFrame.type = (pandora::FrameType)type;
     gFrame.format = FRAME_FORMAT_YUV_420_NV21;
     cv.notify_all(); //唤醒主线程处理图像数据
-    while (!g_process_finished) ; //循环直到线程处理完成
+    while (!g_process_finished) ; //循环直到主线程处理完成
     NV21ToAVNV21(data, pFrame);
     g_process_finished = 0;
 
