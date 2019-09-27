@@ -110,7 +110,7 @@ int FrameGenerator::Init()
         pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_NV21, SWS_BICUBIC, NULL, NULL, NULL);
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
-        printf( "Could not initialize SDL - %s\n", SDL_GetError());
+        printf("Could not initialize SDL - %s\n", SDL_GetError());
         return -1;
     }
 
@@ -129,7 +129,7 @@ int FrameGenerator::Init()
         return -1;
     }
 
-    mTexture = SDL_CreateTexture(mRender, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STREAMING, pixel_w, pixel_h);
+    mTexture = SDL_CreateTexture(mRender, SDL_PIXELFORMAT_NV21, SDL_TEXTUREACCESS_STREAMING, pixel_w, pixel_h);
 
     return 0;
 }

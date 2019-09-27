@@ -49,7 +49,11 @@ void startMainThread(void *arg, void *param)
         }
         pandora->onFrameReady(gFrame);
         if (gFrame.type == FRAME_TYPE_SNAPSHOT) {
-            dumpNV21ToJpeg(gFrame.frame, "output", gFrame.w, gFrame.h, gFrame.stride, gFrame.scanline);
+            int size = gFrame.w * gFrame.h * sizeof(uint8_t) * 3;
+            void *data = malloc(size);
+            memcpy(data, gFrame.frame, size);
+            dumpNV21ToJpeg(data, "output", gFrame.w, gFrame.h, gFrame.stride, gFrame.scanline);
+            free(data);
         }
         g_process_finished = 1;
 	}
