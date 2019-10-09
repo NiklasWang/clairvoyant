@@ -78,8 +78,8 @@ int FrameGenerator::Init()
     }
 
     if (videoStream == -1) {
-        printf ("find video stream failed!\n");
-        exit (1);
+        printf("find video stream failed!\n");
+        exit(1);
     }
 
     pCodecCtx = pFormatCtx->streams[videoStream]->codec;
@@ -87,13 +87,13 @@ int FrameGenerator::Init()
     pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
      
     if (pCodec == NULL) {
-        printf ("avcode find decoder failed!\n");
-        exit (1);
+        printf("avcode find decoder failed!\n");
+        exit(1);
     }
 
     if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
-        printf ("avcode open failed!\n");
-        exit (1);
+        printf("avcode open failed!\n");
+        exit(1);
     }
     mFrame = av_frame_alloc();
     mFrameYUV = av_frame_alloc();

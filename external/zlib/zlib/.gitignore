@@ -1,0 +1,10 @@
+configure.log
+example
+example64
+examplesh
+libz.a libz.so libz.so.1 libz.so.1.2.11
+minigzip
+minigzip64
+minigzipsh
+libz.so.1
+libz.so.1.2.11
