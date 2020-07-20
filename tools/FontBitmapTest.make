@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -std=c99 -DBUILD_LINUX_X86_64 -I$(ROOT_DIR)/external/freetype/freetype-2.6/include
-LDFLAGS = -L$(ROOT_DIR)/external/freetype/freetype-2.6/objs/libs -lfreetype
+CFLAGS = -std=c99 -DBUILD_LINUX_X86_64 -I$(ROOT_DIR)/external/freetype/freetype-2.9.1/include
+LDFLAGS = -L$(ROOT_DIR)/external/freetype/freetype-2.9.1/objs/.libs -lfreetype
 TARGET = font_tester
 sources = FontBitmapTest.c
 objects = $(sources:.c=.o)

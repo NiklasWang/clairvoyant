@@ -57,7 +57,7 @@ BmpWaterMark::BmpWaterMark(uint32_t argNum, va_list va) :
     mLastRotation(ROTATION_ANGLE_0)
 {
     if (argNum == 4) {
-        mBmp = (uint8_t *)va_arg(va, int32_t);
+        mBmp = (uint8_t *)va_arg(va, uint8_t*);
         ASSERT_LOG(mModule, NOTNULL(mBmp), "Bmp can't be NULL, suicide...");
 
         int32_t position = va_arg(va, int32_t);

@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <ft2build.h>
-#include <freetype.h>
-#include <ftglyph.h>
+#include <freetype/freetype.h>
+#include <freetype/ftglyph.h>
 #include <stdio.h>
 
 #define LOGD        printf

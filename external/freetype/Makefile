@@ -16,14 +16,14 @@ ifneq ($(TARGET), $(notdir $(wildcard $(CURRDIR)/$(TARGET))))
 endif
 
  define BUILD
-	cd freetype-2.6; \
+	cd freetype-2.9.1; \
 	./configure; \
 	make; \
-	cp -ar $(CURRDIR)/freetype-2.6/objs/libs/$(FILENAME) $(CURRDIR)/
+	cp -ar $(CURRDIR)/freetype-2.9.1/objs/.libs/$(FILENAME) $(CURRDIR)/
 endef
 
 clean:
-	cd freetype-2.6; \
+	cd freetype-2.9.1; \
 	make  clean; \
 	rm -rf $(CURRDIR)/$(TARGET)
 .PHONY: clean

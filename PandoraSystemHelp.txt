@@ -1,0 +1,35 @@
+/*
+ * Date: 	2020.7.22
+ * Author:	liuyang
+ */
+
+OS: 		ubuntu 20.04
+Kernel:		Linux 5.4.0-40-generic
+Compiler:	gcc & g++ 9.3.0
+
+1. Compiler
+  For installing the latest compiler, you should add
+  deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu focal main
+  deb-src http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu focal main
+  to your /etc/apt/sources.list, and then update & upgrade(carefully this command!).
+  You can install build-essential, then you can get gcc g++ and make....
+  https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test
+
+2. Install packages
+  sudo apt-get install yasm libtool libexif-dev libpng-dev libharfbuzz-dev libxcb-shm0-dev \
+	  libasound2-dev libxcb-shape0-dev libxcb-xfixes0-dev nasm liblzma-dev
+
+3. freetype
+  You should use freetype-2.9.1 instead of freetype-2.6, because there are no some
+  function interfcae in freetype-2.6, eg: FT_Done_MM_Var FT_Done_MM_Var.
+
+4. SDL2
+  For compiling SDL2, you should install below packages:
+  sudo apt-get install build-essential mercurial make cmake autoconf automake \
+	libtool libasound2-dev libpulse-dev libaudio-dev libx11-dev libxext-dev \
+	libxrandr-dev libxcursor-dev libxi-dev libxinerama-dev libxxf86vm-dev \
+	libxss-dev libgl1-mesa-dev libdbus-1-dev libudev-dev libgles2-mesa-dev \
+	libegl1-mesa-dev libibus-1.0-dev fcitx-libs-dev libsamplerate0-dev \
+	libwayland-dev libxkbcommon-dev
+
+5. Finally, fixing a Segmentation fault (core dumped) issue.

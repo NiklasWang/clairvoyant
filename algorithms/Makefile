@@ -16,7 +16,7 @@ dependence := $(sources:.cpp=.d)
 SHARED_LIBS = liblog libmemory libcore
 STATIC_LIBS = libsp libutil libutils libthreads
 
-CXXFLAGS += -I$(ROOT_DIR)/external/freetype/freetype-2.6/include
+CXXFLAGS += -I$(ROOT_DIR)/external/freetype/freetype-2.9.1/include
 
 
 include $(MAKE_RULE)/find.library.make.rule 

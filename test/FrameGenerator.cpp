@@ -106,6 +106,28 @@ int FrameGenerator::Init()
     av_dump_format(pFormatCtx,0,filename,0);
     printf("-------------------------------------------------\n");
 #endif
+    {
+        AVPixelFormat pixFormat;
+        switch (pCodecCtx->pix_fmt) {
+            case AV_PIX_FMT_YUVJ420P :
+                pixFormat = AV_PIX_FMT_YUV420P;
+                break;
+            case AV_PIX_FMT_YUVJ422P  :
+                pixFormat = AV_PIX_FMT_YUV422P;
+                break;
+            case AV_PIX_FMT_YUVJ444P   :
+                pixFormat = AV_PIX_FMT_YUV444P;
+                break;
+            case AV_PIX_FMT_YUVJ440P :
+                pixFormat = AV_PIX_FMT_YUV440P;
+                break;
+            default:
+                pixFormat = pCodecCtx->pix_fmt;
+                break;
+        }
+        pCodecCtx->pix_fmt = pixFormat;
+    }//added by Wu Hangyu
+
     img_convert_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt,
         pCodecCtx->width, pCodecCtx->height, AV_PIX_FMT_NV21, SWS_BICUBIC, NULL, NULL, NULL);
 

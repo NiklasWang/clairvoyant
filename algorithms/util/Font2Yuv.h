@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include <ft2build.h>
-#include <freetype.h>
+#include <freetype/freetype.h>
 
 
 namespace pandora {

@@ -22,7 +22,7 @@ include $(MAKE_RULE)/find.library.make.rule
 
 include $(MAKE_RULE)/dependency.make.rule
 
-LDFLAGS += -L $(ROOT_DIR)/external/freetype/freetype-2.6/objs/libs -L $(ROOT_DIR)/external/libjpeg-turbo/libjpeg-turbo/libs -L $(ROOT_DIR)/external/zlib/zlib -I/usr/include/harfbuzz  -I/usr/include/libpng  -Wl,-Bstatic  -lfreetype -lturbojpeg -lexif -lutils -lutil -Wl,-Bdynamic -llog -lharfbuzz -lpng
+LDFLAGS += -L $(ROOT_DIR)/external/freetype/freetype-2.9.1/objs/.libs -L $(ROOT_DIR)/external/libjpeg-turbo/libjpeg-turbo/libs -L $(ROOT_DIR)/external/zlib/zlib -I/usr/include/harfbuzz  -I/usr/include/libpng  -Wl,-Bstatic  -lfreetype -lturbojpeg -lexif -lutils -lutil -Wl,-Bdynamic -llog -lharfbuzz -lpng
 
 CXXFLAGS += -I$(ROOT_DIR)/test/
 LDFLAGS += -L $(ROOT_DIR)/test/

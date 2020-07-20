@@ -11,7 +11,7 @@ dependence := $(sources:.cpp=.d)
 SHARED_LIBS = liblog libmemory libcore libexternal
 STATIC_LIBS = libsp libyuv libthreads libutils
 
-CXXFLAGS += -I$(ROOT_DIR)/external/libyuv/libyuv/include -I$(ROOT_DIR)/external/freetype/freetype-2.6/include -I$(ROOT_DIR)/external/libexif -I$(ROOT_DIR)/external/libjpeg-turbo/libjpeg-turbo/
+CXXFLAGS += -I$(ROOT_DIR)/external/libyuv/libyuv/include -I$(ROOT_DIR)/external/freetype/freetype-2.9.1/include -I$(ROOT_DIR)/external/libexif -I$(ROOT_DIR)/external/libjpeg-turbo/libjpeg-turbo/
 
 include $(MAKE_RULE)/find.library.make.rule 
 
